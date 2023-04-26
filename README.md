@@ -1,4 +1,5 @@
-# Demography
+# Land Use Planning
 
-In this stage of work, we carried out an exploratory analysis of Brazilian demographic data. The data used for the analysis were made available within the “demography” branch. For the code in the .rmd file to work, these files must be associated with the working directory. The two .rmd files refer to the same text, one in English, the other in Portuguese (Brazil).
+Repository created to make available the files associated with the Doctoral Thesis under development at the National Institute of Metrology, Quality and Technology (INMETRO).
 
+Each of the workflow steps is represented in one of the branches associated with the repository.

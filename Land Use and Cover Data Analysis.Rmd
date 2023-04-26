@@ -1,0 +1,165 @@
+---
+title: "Análise Exploratória de Dados de Uso e Cobertura do Solo"
+author: "Maximiliano Gobbo"
+date: '2022-06-09'
+output:
+  word_document: default
+  pdf_document: default
+  html_document:
+    number_sections: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r include=FALSE}
+library(sf)      # vector data package introduced in Chapter 2
+library(terra)   # raster data package introduced in Chapter 2
+library(dplyr)   # tidyverse package for data frame manipulation
+library(spData)
+library(spDataLarge)
+library(raster)
+library(ows4R)
+library(osmdata)
+library(geodata)
+library(tigris)
+library(tidycensus)
+library(GSODR)
+library(tidyverse)
+library(ggplot2,gapminder, magrittr)
+library(pander)
+```
+
+# Introdução
+
+<div style="text-align: justify">   The *raster data model* divides the surface up into cells of constant size. Raster datasets are the basis of background images used in web-mapping and have been a vital source of geographic data since the origins of aerial photography and satellite-based remote sensing devices. Raster aggregate spatially specific features to a given resolution, meaning that they are consistent over space and scalable (many worldwide raster datasets are available). *Raster* dominates many environmental sciences because of the reliance on remote sensing data. 
+
+  The spatial raster data model represents the world with the continuous grid of cells.This data model often refers to so-called regular grids, in which each cell has the same, constant size. The raster data model usually consists of a raster header and a matrix (with rows and columns) representing equally spaced cells (often also called pixels).The raster header defines the coordinate reference system, the extent and the origin. The origin (or starting point) is frequently the coordinate of the lower-left corner of the matrix. The header defines the extent via the number of columns, the number of rows and the cell size resolution. Hence, starting from the origin, we can easily access and modify each single cell by either using the ID of a cell or by explicitly specifying the rows and columns. This matrix representation avoids storing explicitly the coordinates for the four corner points (in fact it only stores one coordinate, namely the origin) of each cell corner as would be the case for rectangular vector polygons. This and map algebra makes raster processing much more efficient and faster than vector data processing. However, in contrast to vector data, the cell of one raster layer can only hold a single value. The value might be numeric or categorical. Raster maps usually represent continuous phenomena such as elevation, temperature, population density or spectral data. Discrete features such as soil or land-cover classes can also be represented in the raster data model. Both uses of raster data sets shows how the borders of discrete features may become blurred in raster data sets. Depending on the nature of the application, vector representations of discrete features may be more suitable.
+
+  To functions for raster data manipulation, **terra()** provides many low-level functions that can form a foundation for developing new tools for working with raster datasets. **Terra()** also lets you work on large raster data sets that are too large to fit into the main memory. In this case, **terra()** provides the possibility to divide the raster into smaller chunks, and processes these interactively instead of loading the whole raster file into RAM.
+  
+  The raster data model stores the coordinate of the grid cell indirectly, meaning the distinction between attribute and spatial information is less clear.
+  
+# Carregamento e Análise Exploratória dos Dados de Uso e Cobertura do Solo
+
+  Os dados sobre uso e cobertura do solo utilizados nesta pesquisa foram descarregados da plataforma do Instituto Brasileiro de Geografia e Estatística (IBGE) e salvos em uma pasta de trabalho no computador dos pesquisadores. Estes dados podem ser adquiridos (por outros usuários e pesquisadores) gratuitamente através da base de dados, cujo link é <https://www.ibge.gov.br/geociencias/informacoes-ambientais/cobertura-e-uso-da-terra/15831-cobertura-e-uso-da-terra-do-brasil.html?=&t=o-que-e>.A função **getwd()** confirma o diretório no computador dos pesquisadores onde todos os dados encontram-se:
+
+```{r}
+getwd()
+```
+
+  Seguindo a mesma lógica da análise exploratória de dados demográficos, o enfoque desta investigação foi o Estado de São Paulo, tendo em vista a validação do mapeamento futura. Foram baixados da plataforma digital do IBGE os dados referentes à cobertura do solo dos anos 2010 e 2018; entretanto, optou-se por utilizar os dados raster referentes ao ano de 2010 ao considerar o ano de realização do último censo demográfico brasileiro (2010). Pontua-se ainda que há, na bibliografia de antromas, a recomendação de utilizar-se dados demográficos e de cobertura do mesmo ano para otimizar os resultados obtidos na árvore de decisão e no subsequente mapeamento de antromas, como apresenta @Gauthier_2021.
+  
+  Conforme apresentou-se na introdução, os dados sobre uso e cobertura do solo no Brasil são dados raster e, portanto, seguem uma lógica de inserção diferente dos dados vetoriais utilizados na análise exploratória de dados demográficos. Deste modo, utilizando a função **shapefile()** carregou-se os dados raster de uso e cobertura do solo no Brasil. Entre os **()**, especificou-se o nome do arquivo no diretório, cujo nome é "**Cobertura_uso_da_terra_SP**". Pontua-se que este nome reflete um conjunto de arquivos disponibilizados pelo IBGE e devem constar todos no diretório para que a função **shapefile()** possa interpretar os dados raster.
+
+```{r}
+shapefile("Cobertura_uso_da_terra_SP")
+```
+
+  Após o carregamento do conjunto de dados raster, criou-se um objeto a partir deles, o qual recebe o nome de **coberturasp**:
+  
+```{r}
+coberturasp <- shapefile("Cobertura_uso_da_terra_SP")
+```
+
+  Seguidamente, confirmou-se a criação do objeto e sua composição:
+```{r}
+coberturasp
+```
+  
+  Utilizando a função **summary()**, analisou-se as características básicas referentes ao objeto **coberturasp**:
+```{r}
+summary(coberturasp)
+```
+  
+  Conforme apresentam os resultados acima, nota-se que o objeto refere-se a classe dos dataframes, o qual é estruturado por polígonos espaciais. Na estrutura do objeto, verifica-se ainda que há indicação das coordenadas geográficas, aqui representadas pelos valores de **x** e **y**. Intuindo confirmar sua estrutura de dataframe, empregou-se a função **class()** no objeto **coberturasp**:
+```{r}
+class(coberturasp)
+```
+
+  Os resultados apresentados confirmaram que o objeto **coberturasp**, para além de um dataframe, segue a estrutura de polígonos espaciais, conforme apontado anteriormente. De maneira a ampliar o conhecimento sobre a estrutura do objeto **coberturasp**, utilizou-se a função **names()** para analisar quais os nomes da colunas que compõem o dataframe:
+  
+```{r}
+names(coberturasp)
+```
+
+```{r}
+head(coberturasp)
+```
+  
+  
+  Conforme apresentado acima, o dataframe **coberturasp** é composto por 8 colunas que recebem condificações para cada especificidade espacial. A função **dim()** auxiliou na identificação do número de linhas que integram o dataframe:
+```{r}
+dim(coberturasp)
+```
+
+  Os resultados apontaram que o objeto **coberturasp** possui 248.217 linhas em sua estrutura de 8 colunas. Para verificar a estrutura espacial do dataframe, utilizou-se a função **plot()** para visualizar a plotagem dos dados raster de cobertura e uso do solo:
+```{r}
+plot (coberturasp)
+plot(coberturasp["USO2010"])
+```
+
+  Partindo do objeto **coberturasp**, realizou-se a conversão do objeto (estrutura dos dados) em dois modelos diferentes para atender especificidades na análise. Primeiramente, **coberturasp** foi convertido em um objeto **sp**, ou seja, um conjunto de informações espaciais (do inglês, *spatial), conforme ilustra a primeira linha de comando. A segunda linha de comando confirma a criação do objeto e apresenta sua estrutura analítica. 
+```{r}
+coberturasp_sp = as(coberturasp, "Spatial")
+coberturasp_sp
+```
+
+  No segundo momento, transformou-se o objeto **coberturasp** em um objeto **sf**, ou seja, um conjunto de dados simples/tabulares (do inglês, *simple feature collection*). De acordo com a literatura, esta transformação torna a estrutura dos dados em um objeto passível de assimilação por outras estruturas de mapeamento e localização espacial. A estrutura da função na primeira linha de comando do código a seguir indica como realizou-se esta conversão; na segunda linha de comando, tem-se a confirmação da criação do objeto **coberturasp_sf**, bem como sua estrutura.  
+```{r}
+coberturasp_sf = st_as_sf(coberturasp)
+coberturasp_sf
+```
+  
+  Partindo do dataframe **coberturasp_sf**, utilizou-se a função **st_sfc()** para isolar a estrutura geométrica poligonal do Estado de São Paulo. Como verificou-se acima, a coluna geometria (do inglês, *geometry*) possui em sua estrutura os valores de **x, y** e **z**, as quais delimitam a estrutura dos polígonos no Estado. No código abaixou, selecionou-se a geometria através do comando **$** que permite especificar a coluna (ou atributo) que se quer selecionar dentro do objeto/dataframe. Diante disso, criou-se um novo objeto somente com as informações geométricas, cujo nome é **geomcoberturasp**, como mostra o código a seguir. 
+```{r}
+st_sfc(coberturasp_sf$geometry)
+geomcoberturasp = st_sfc(coberturasp_sf$geometry)
+geomcoberturasp
+```
+
+  A função **st_crs()** foi aplicada para verificar qual é o sistema de referências geográficas (do inglês, *coordinate reference system*) associado à estrutura poligonal de **geomcoberturasp**. 
+```{r}
+st_crs(geomcoberturasp)
+```
+
+  Conforme previsto, os dados estão vinculados ao **Sistema de Referência Geocêntrico para as Americas 2000 (SIRGAS 2000)**, sistema de posicionamento geográfico utilizado em território nacional como padrão do IBGE e da INDE, e descritos no sistema de codificação **WKT** (do inglês, *well-know text*) que é o padrão para geometrias de recursos simples, ou seja, para pontos, linhas e/ou polígonos. Sendo assim, confirmamos que não houve perdas até aqui nas informações de uso e cobertura durante a manipulação dos dados.  
+```{r}
+plot(geomcoberturasp, crs = "WKT")
+```
+  
+  Focando nos 4 conjuntos de dados derivados até aqui (**geomcoberturasp**, **coberturasp**, **coberturasp_sf** e **coberturasp_sp**), realizou-se uma comparação entre eles utilizando diferentes funções que ampliam a compreensão sobre o conjunto de dados. A primeira função empregada na análise foi **dim()**, a qual indica o número de linhas, colunas e camadas que estruturam os conjuntos de dados.
+```{r}
+dim(geomcoberturasp)
+dim(coberturasp)
+dim(coberturasp_sf)
+dim(coberturasp_sp)
+```
+
+  Nota-se que em **geomcoberturasp** e **coberturasp_sp** não há, nos conjuntos de dados, descrição em linhas, colunas e camadas, ou seja, ambos os objetos são formas espaciais que delimitam a estrutura territorial do Estado de São Paulo. Por outro lado, em **coberturasp** e **coberturasp_sf** são compostos por uma única cama ([1]) distribuídas em 248.217 e 8 e 9 colunas, respectivamente. Complementarmente, a função **ncell()** analisou o número de células (pixels) que estruturam os quatro conjuntos de dados.
+```{r}
+ncell(geomcoberturasp)
+ncell(coberturasp)
+ncell(coberturasp_sf)
+ncell(coberturasp_sp)
+```
+
+  Observa-se nos resultados que **coberturasp_sp** possui uma única célula, o que retrata seu caráter *classe formal espacial*, ou seja, uma desrição do Estado de São Paulo, sem detalhamento das espacialidades internas que o compõe. Em se tratando de **geomcoberturasp**, vê-se que existem 248.217 células que estruturam o dataframe de polígonos espaciais, apresentando relativa espacialidade da informação na plotagem. Entretanto, os conjuntos **coberturasp** e, principalmente, **coberturasp_sf** são compostos por um número relativamente mais elevado de células na sua estrutura espacial, 1.985.736 e 2.233.953 respectivamente, o que permite detalhar melhor a informação no território paulista. Ponderando sobre o detalhamento, a função **ext()** permitiu a análise da extensão espacial das informações nos conjuntos de dados.
+```{r}
+ext(coberturasp)
+ext(coberturasp_sf)
+ext(coberturasp_sp)
+```
+
+  Diante dos resultados pontua-se que o conjunto de dados de **geomcoberturasp** não foi analisado por esta função, pois, objetos do tipo **sfc_polygon** não podem ser analisados por ela; portanto, os resultados acima referem-se somente aos outros três conjuntos de dados. No que resguarda aos três conjuntos, tem-se que todos possuem a mesma extensão espacial, estruturados na base *xmin / xmax / ymin / ymax*, conforme mostram os resultados. Outra função proposta foi **crs()**, a qual identifica o sistema de coordenadas geográficas em cada dos conjuntos.
+```{r}
+crs(geomcoberturasp)
+crs(coberturasp)
+crs(coberturasp_sf)
+crs(coberturasp_sp)
+```
+  
+  Sendo os quatro conjuntos provenientes da mesma fonte de dados (o IBGE), todos os objetos estão referenciados geograficamente pelo **SIRGAS 2000** e seguem o padrão **WKT** para descrição espacial dos dados. 
+  
+</div>

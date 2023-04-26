@@ -1,4 +1,4 @@
-# landuseplanning
+# Land Use Planning
 Repository created to present the stages of development of the Doctoral Thesis in Environmental Biotechnology.
 
 The Doctoral Thesis was divided into work stages. Each of the steps represents a branch associated with the research performed.

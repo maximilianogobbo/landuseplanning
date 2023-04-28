@@ -1,0 +1,230 @@
+---
+title: "Análise Exploratória de Dados de Uso e Cobertura do Solo"
+author: "Maximiliano Gobbo"
+date: '2022-06-09'
+output:
+  word_document: default
+  pdf_document: default
+  html_document:
+    number_sections: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r include=FALSE}
+library(sf)      # vector data package introduced in Chapter 2
+library(terra)   # raster data package introduced in Chapter 2
+library(dplyr)   # tidyverse package for data frame manipulation
+library(spData)
+library(raster)
+library(ows4R)
+library(osmdata)
+library(geodata)
+library(tigris)
+library(tidycensus)
+library(GSODR)
+library(tidyverse)
+library(ggplot2,gapminder, magrittr)
+library(pander)
+```
+
+# Introdução
+
+<div style="text-align: justify">   O levantamento de atributos associados a um conjunto de dados geoespaciais é fundamental para identificar pontos para correlação entre diferentes tipologias de informações geográficas, como apresentou Machlis (2017). O reconhecimento destes atributos permite que informações sociais e ambientais possam ser conectadas dentro da programação para o mapeamento, gerando cartografias para as diferentes áreas do conhecimento, conforme discorreu Anderson (2021). Nesta ótica, Moreno e Basile (2021) mostraram que por meio desta integração é possível, no universo da linguagem R®, produzir mapas com qualidade suficiente para compor análises territoriais, espaciais, socioambientais, ambientais e culturais, atendendo assim aos mais diversos campos científicos. 
+Considerando isto, Gauthier (2021) e Ellis, Beusen e Goldewijk (2020) demonstraram, por meio do mapeamento global dos biomas antropogênicos (antromas), que a correlação entre diferentes tipologias de informações geoespaciais, além de possível, mostra-se como uma ferramenta moderna para os estudos socioecológicos. Estes autores realizaram o mapeamento apenas indicado utilizando linguagem computacional, linguagem R® propriamente dita, e foram capazes de gerar um mapeamento relevante em grade hexagonal de 96 km² do DGG. 
+
+Segundo as informações reportadas nas bases estruturais sobre os antromas, Ellis e Ramankutty (2008) apontaram que as informações demográficas, como densidade demográfica, e de uso e cobertura do solo, como tipologias de coberturas, são fundamentais para a identificação, classificação e mapeamento das diferentes classes antropogênicas. Tanto no produto cartográfico reportados por estes dois autores, como naquele publicizado por Gauthier (2021) e Ellis, Beusen e Goldewijk (2021), é perceptível que os recortes territoriais dos usos do solo (polígonos estruturados) representam uma informação significativa para a classificação e para o mapeamento dos antromas.
+
+Assumindo os produtos cartográficos descritos acima e as indicações sobre atributos de bancos de dados, e intuindo futuramente produzir o mapeamento local dos antromas brasileiros, realizamos a análise exploratória de dados sobre uso e cobertura do solo. Estes dados são produzidos pelo Instituto Brasileiro de Geografia e Estatística (IBGE), seguindo a descrição técnica documentada no Manual Técnico de Uso e Cobertura da Terra (IBGE, 2013b). 
+
+Os objetivos centrais desta investigação foram identificar os atributos que compunham os dados disponibilizados pela instituição, reconhecer a espacialização da informação geográfica de uso e cobertura do solo e verificar se existiam atributos chave para correlação destes dados geoespaciais com os dados demográficos, analisados por nós em outro trabalho. Para atingir a estes objetivos, nos baseamos nas formatação lógica e analítica apresentadas nas obras de Lovelace et al. (2019) e Anderson (2021), onde são apresentadas as funções para a análise exploratória de dados no software R®. 
+
+# Apresentação dos dados e diretrizes metodológicas  
+
+Os dados sobre uso e cobertura do solo utilizados nesta pesquisa foram aqueles disponibilizados na plataforma do Instituto Brasileiro de Geografia e Estatística (IBGE). Estes dados foram baixados e salvos na pasta de trabalho (diretório) associada a esta etapa da investigação. Ressaltamos que ele integram as políticas nacionais de dados abertos brasileiros (IBGE, 2019) e estão disponíveis para acesso remoto no link:
+
+<https://www.ibge.gov.br/geociencias/informacoes-ambientais/cobertura-e-uso-da-terra/15831-cobertura-e-uso-da-terra-do-brasil.html?=&t=o-que-e>.
+
+Destacamos que os dados de uso e cobertura do solo foram produzidos pelo IBGE seguindo as diretrizes metodológicas expressas no Manual Técnico de Uso e Cobertura da Terra (IBGE, 2013b). Previamente, realizamos a análise da qualidade dos dados disponibilizados pelo instituto brasileiro, verificando a conformidade deles ao uso pretendido para regionalização dos antromas brasileiros (GOBBO, 2020). 
+
+Dando prosseguimento a nossa pesquisa de Doutorado, investigamos nesta análise exploratória atributos que integravam o acervo de dados disponibilizados pelo IBGE. O objetivo central foi identificar quais atributos associados a estas informações geográficas que permitiriam a correlação entre os dados de uso e cobertura do solo e os dados demográficos, bem como a plotagem desta informações no mapeamento local dos antromas, como sugerem Guathier (2021) e Ellis, Beusen e Goldewijk (2020).
+
+Para tanto, a análise exploratória de dados de uso e cobertura do solo foi realizada no software R®, alinhando nossa investigação àquelas realizadas pelos autores supracitados sobre os antromas. As diretrizes analíticas utilizadas na linguagem R® foram extraídas das obras de Lovelace et al. (2019) e Anderson (2021), onde os autores percorrem um caminho investigativo para identificar os atributos constituintes dos dados e a possibilidade de integração das informações a mapeamentos.
+
+Como apresentamos anteriormente na Metodologia da Tese, nosso enfoque foi dado ao Estado de São Paulo, justificando-nos na representatividade da Unidade da Federação para economia, política e gestão nacional e pelos recortes territoriais e diversidade sociocultural das populações que compõe o mosaico paulista. Nesta perspectiva, foram baixados, do acervo digital do IBGE, os dados referentes à cobertura do solo de São Paulo para o intervalo entre os anos de 2010 e 2018. 
+
+Seguindo as recomendações metodológicas de Gauthier (2021) para classificação e mapeamento dos antromas, o qual indica que os dados de uso e cobertura e censitários devem possuir mesma datação para otimizar a correlação e reduzir as distorções das informações, optamos por utilizar os dados raster referentes ao ano de 2010, último ano em que os dados da operação censitária já se encontram totalmente disponibilizados na plataforma do instituto (IBGE, 2013a). 
+
+# Análise exploratória dos dados de uso e cobertura do solo
+
+Para apresentar e confirmar o diretório de trabalho da análise exploratória de dados sobre uso e cobertura do solo, utilizamos a função getwd (_), a qual informa o nome da pasta em que os arquivos a serem analisados foram salvos, como demonstramos na sequência. 
+
+```{r}
+getwd()
+```
+
+Destacamos que estes dados brasileiros são do tipo raster e, portanto, seguem uma lógica de carregamento diferente dos dados vetoriais no software R®. Deste modo, empregamos a função shapefile (_) para carregar estes dados no programa. Entre os parênteses da função, especificamos o nome do arquivo no diretório, cujo nome era Cobertura_uso_da_terra_SP. Ressaltamos que este nome refletia um conjunto de arquivos disponibilizados pelo IBGE com diferentes extensões, os quais deveriam constar na pasta de trabalho para que a função shapefile (_) pudesse interpretá-los conjuntamente. 
+
+O Script 12 expressa na primeira linha como foi realizado o carregamento dos dados. Após o carregamento do conjunto de dados raster, criamos um objeto (dataframe) a partir dele, utilizando para isto o indicador (seta) precedido do nome dado de coberturasp, conforme demonstramos na segunda linha do código. Seguidamente, confirmamos a criação do objeto e sua composição utilizando somente o nome do conjunto coberturasp (destacado no script).
+
+*Script 12:* Carregamento do arquivo Cobertura_uso_da_terra_SP
+```{r}
+shapefile("C:/ARQUIVOS COMPUTADOR/DOUTORADO/DOUTORADO TESE/03 DADOS GEOESPACIAIS/03 USO E COBERTURA DO SOLO/Cobertura_uso_da_terra_SP.shp")
+
+coberturasp <- shapefile("Cobertura_uso_da_terra_SP")
+```
+Fonte: os autores (2023). Legenda: script descrevendo o carregamento dos dados de Cobertura_da_terra_SP por meio da função shapefile (_) e a criação do dataframe coberturasp. No script são apresentadas diferentes informações que constituem o arquivo e os dados carregados. 
+
+Os resultados apresentados no Script 12 trouxeram informações relevantes sobre a composição do conjunto coberturasp. Primeiramente, observamos que a classe (do inglês, class) do objeto é do tipo dataframe de polígonos espaciais, ou seja, os dados descreviam um conjunto de polígonos que representavam as áreas que compunham o mosaico territorial do Estado de São Paulo. Adicionalmente, verificamos que o objeto era composto por 248.217 linhas (do inglês, features) e 8 variáveis (do inglês, variables). Estas variáveis possuíam os seguintes nomes (do inglês, names): INDICE_GRE, USO2000, USO2010, USO2012, USO2014, USO2016, USO2018 e ID_GRE. 
+
+Em valores mínimos e máximos (respectivamente, min values e max values) foram apresentados os valores mínimos e máximos para cada uma das variáveis que integravam o conjunto de dados. Por outro lado, em extend, nos deparamos com a indicação da extensão mínima e máxima dos valores de X e Y que estruturavam o conjunto de polígonos, ou seja, os valores dos pares ordenados para plotagem dos dados. Complementarmente, por meio do CRS indicado no Script 12, reconhecemos que existia um sistema de projeção e posicionamento geográfico atrelado à estrutura do conjunto de dados. 
+
+De modo a ampliar nossa percepção sobre o conjunto coberturasp e confirmar os dizeres acima, utilizamos a função summary (_) para identificar características básicas do dataframe poligonal. Posteriormente, empregamos a função class (_) na análise para ratificar a classe que o conjunto integra. Sequencialmente, utilizamos a função names (_) para identificar quais eram os nomes expressos na primeira linha do dataframe, ou seja, os atributos que o integravam. Para confirmar o número de linhas que integram o dataframe, aplicamos a função dim (_). As funções e seus resultados foram reportados no Script 13 adiante.
+
+*Script 13:* Análise preliminar de coberturasp
+```{r}
+summary(coberturasp)
+
+class(coberturasp)
+
+names(coberturasp)
+
+dim(coberturasp)
+```
+Fonte: os autores (2023). Legenda: script com a análise preliminar de coberturasp, onde foram empregadas as funções summary (_) e class (_).  
+
+Conforme os resultados apresentados acima (Script 13), ratificamos através da função class (_) que o objeto pertencia a classe de dataframes de polígonos espaciais. Na estrutura do objeto, verificamos ainda que o objeto possuía integrado a si um sistema de coordenadas geográficas (CRS), o qual foi representado no Script pelos valores mínimos e máximos de X e Y e pela expressão “proj4string”. Esta expressão revelou a capacidade de projeção geográfica dos dados graças às coordenadas indicadas na estrutura do objeto (pares ordenados XY). 
+
+Para além, comprovamos que coberturasp possuía a característica espacial integrada à sua estrutura, revelada pela expressão “sp”, que provém do termo inglês spatial (espacial). Outro aspecto importante foi a indicação de “attr”, expressão que demonstrou que o objeto era composto por um conjunto de atributos (attr), os quais estavam armazenados no formato de pacote (do inglês, package). 
+
+Ademais, os resultados provenientes da função names (_) reafirmaram os nomes dos atributos do conjunto coberturasp, bem como sua distribuição em 8 colunas. Naquilo que resguardava à função dim (_), os resultados comprovaram que o objeto era constituído por 248.217 linhas e 8 colunas. Verificamos assim que cada uma das linhas se referia a diferentes estruturas poligonais do território paulista, ou seja, são retratavam as localidades e as tipologias de uso e cobertura que compõem o mosaico do Estado de São Paulo. 
+
+Por outro lado, considerando os resultados obtidos pela função names (_) e a tipologia dos resultados para cada um dos atributos, indicados pela função summary (_), reconhecemos que os atributos “USO2000”, “USO2010”, “USO2012”, “USO2014”, “USO2016” e “USO2018” retratavam os diferentes anos do monitoramento de uso e cobertura da Terra, operação realizada pelo IBGE bienalmente (IBGE, 2017; 2018; 2020). 
+
+Nesta perspectiva, como nos interessavam o ano de 2010 para estruturação da árvore de decisão para classificação dos antromas brasileiros, filtramos os dados referentes ao ano na função plot (_), utilizando para tal o nome do atributo “USO2010” entre os colchetes [] na função. A Figura 12 reporta como foram plotados os dados de coberturasp para o ano de 2010.
+
+*Figura 12:* Plotagem dos dados de coberturasp para o ano de 2010.
+```{r}
+plot (coberturasp)
+plot(coberturasp["USO2010"])
+```
+Fonte: os autores (2023). Legenda: Figura produzida através da plotagem dos dados de coberturasp, utilizando a função plot (_) para produção e os colchetes [] para filtrar os dados referentes ao ano de 2010. 
+
+A Figura 12, produzida pela plotagem do conjunto de dados, demonstrou que a estrutura poligonal do Estado de São Paulo estava visivelmente estruturada dentro do dataframe coberturasp. Porém, o preenchimento completo da área territorial não permitiu a diferenciação dos usos e coberturas do solo que compunham o mosaico. Diante desses resultados, realizamos a conversão de coberturasp em dois modelos diferentes para atender aos requisitos apenas referidos, sendo eles, a individualização das diferentes tipologias de uso e cobertura e a fragmentação dos polígonos que compunham o território paulista. 
+
+Primeiramente, o conjunto de dados foi convertido em um objeto do tipo “sp”, ou seja, um conjunto de informações espaciais (do inglês, spatial). Esta operação foi realizada através da função as (_, “spatial) e deu origem ao dataframe coberturasp_sp. Após a criação deste conjunto espacial, verificamos que ele integrava a classe (class) dos objetos espaciais (spatial) e que era composto por um atributo único (features). Contudo, em sua estrutura estavam indicados os valores mínimos e máximos de X e Y (extent), o que linearmente integrava a estrutura de projeção gráfica e o sistema de referência de coordenadas do objeto (CRS). 
+
+```{r}
+coberturasp_sp = as(coberturasp, "Spatial")
+coberturasp_sp
+```
+
+Em um segundo momento, transformamos o mesmo objeto, coberturasp, em um objeto do tipo “sf”, ou seja, um conjunto de dados simples/tabulares (do inglês, simple feature collection). Para este procedimento utilizamos a função st_as_sf (_), que converte conjuntos de dados “st” em objetos do tipo “sf”. De acordo com as inferências feitas por Lovelace et al. (2019), esta transmutação tornaria a estrutura dos dados um objeto passível de assimilação por outras estruturas de mapeamento e localização espacial. 
+
+```{r}
+coberturasp_sf = st_as_sf(coberturasp)
+coberturasp_sf
+```
+
+Os resultados indicaram que o objeto coberturasp_sf foi criado corretamente, sendo este composto por 248.217 linhas e 8 colunas (features e fields, respectivamente). Ademais, a tipologia geométrica do conjunto era poligonal (polygon), possuindo dimensões XY (pares ordenados) e limites de plotagem (bounding box) determinados pelos valores mínimos e máximos de XY. Identificamos ainda que o sistema de referência de coordenadas deste objeto estava atrelado ao SIRGAS 2000, sistema utilizado pelo IBGE na produção das diferentes informações geográficas nacionais. 
+
+Partindo do dataframe coberturasp_sf, utilizamos a função st_sfc (_) para isolar a estrutura geométrica poligonal do Estado de São Paulo. Como verificamos no código R®, havia em coberturasp_sf um atributo associado à geometria (do inglês, geometry) do conjunto. Neste atributo constatamos a presença de valores X e Y (dimensões), os quais delimitavam a estrutura dos polígonos no Estado. Considerando isso, selecionamos o atributo geometria através do comando cifrão ($), que permite especificar a coluna (ou atributo) de interesse dentro do conjunto de dados. Conjuntamente, criamos um dataframe somente com as informações geométricas, cujo nome dado geomcoberturasp. O Script 14 ilustra a operação descrita acima. 
+
+*Script 14:* Criação do objeto geomcoberturasp
+```{r}
+st_sfc(coberturasp_sf$geometry)
+geomcoberturasp = st_sfc(coberturasp_sf$geometry)
+geomcoberturasp
+```
+Fonte: os autores (2023). Legenda: script descrevendo a conversão de coberturasp_sf em geomcoberturasp, onde foram selecionadas somente as informações geométricas (geometry) do primeiro conjunto para estruturar o segundo. 
+
+As indicações apresentadas durante a confirmação da criação de geomcoberturasp, nos confirmaram que o conjunto era composto por 248.217 linhas (features) em sua estrutura geométrica do tipo poligonal (polygon), formados pelas dimensões XY (dimension) com valores máximos e mínimos para ambos (bounding box). Houve ainda a indicação de que o dataframe possuía associado a ele do CRS utilizado pelo IBGE, ou seja, do Sistema de Referência Geocêntrico para as Américas 2000 (SIRGAS 2000). 
+
+```{r}
+st_crs(geomcoberturasp)
+```
+
+Apesar de já haver indicação do CRS, aplicamos a função st_crs (_) para ampliar nosso entendimento sobre o sistema de referências geográficas associado à estrutura poligonal do objeto. Segundo os dados apontados pela função, constatamos que os dados estavam vinculados ao SIRGAS 2000 e descritos no sistema de codificação WKT (do inglês, well-know text), que é o padrão para geometrias de recursos simples, ou seja, para pontos, linhas e/ou polígonos. 
+
+Realizadas as manipulações acima tratadas, aplicamos a função plot (_) no conjunto geomcoberturasp, de modo a verificar o padrão de visualização destes dados. Entre os parênteses, inserimos a informação “crs = WKT” para orientar a plotagem dos dados conforme o sistema de codificação dos dados, como retratamos acima. 
+
+*Figura 13:* Plotagem dos dados de geomcoberturasp
+```{r}
+plot(geomcoberturasp, crs = "WKT")
+```
+Fonte: os autores (2023). Legenda: Figura produzida através da plotagem dos dados de geomcoberturasp, utilizando a função plot (_) para produção e a indicação do CRS como “WKT”. 
+
+Por meio da plotagem dos dados de geomcoberturasp (Figura 13), confirmamos que não houve perdas estruturais nos dados de uso e cobertura durante a manipulação dos dados. Entretanto, como mostrou o resultado do código, a indicação de WKT não foi necessária para a plotagem dos dados, tendo em vista que este não era um parâmetro gráfico. 
+
+Focando nos 4 conjuntos de dados estruturados até aqui (geomcoberturasp, coberturasp, coberturasp_sf e coberturasp_sp), realizamos uma comparação entre eles, utilizando diferentes funções para ampliar nossa compreensão sobre eles. A primeira função foi dim (_), a qual indica o número de linhas, colunas e camadas que estruturam os conjuntos de dados. Complementarmente, com a função ncell (_) analisamos o número de células (pixels) que estruturavam os quatro conjuntos. 
+
+Sob outra perspectiva e ponderando sobre o detalhamento destes dataframes, aplicamos função ext (_) para compreender a extensão espacial das informações nos quatro conjuntos. E finalmente a função crs (_) foi empregada para confirmarmos que houve o mantenimento do sistema de coordenadas geográficas em todos eles. 
+
+O Script 15 a seguir reporta os resultados obtidos pela aplicação das funções descritas acima. Nele houve a separação por funções para agrupar a análise dos quatro conjuntos investigados.
+
+*Script 15:* Análise da composição dos quatro conjuntos de dados
+```{r}
+dim(geomcoberturasp)
+dim(coberturasp)
+dim(coberturasp_sf)
+dim(coberturasp_sp)
+```
+
+```{r}
+ncell(geomcoberturasp)
+ncell(coberturasp)
+ncell(coberturasp_sf)
+ncell(coberturasp_sp)
+```
+
+```{r}
+ext(coberturasp)
+ext(coberturasp_sf)
+ext(coberturasp_sp)
+```
+
+```{r}
+crs(geomcoberturasp)
+crs(coberturasp)
+crs(coberturasp_sf)
+crs(coberturasp_sp)
+```
+  
+Notamos nos resultados obtidos pela função dim (_) que os conjuntos geomcoberturasp e coberturasp_sp não eram estruturados em linhas, colunas e camadas, ou seja, ambos os objetos eram formas espaciais que somente delimitam a estrutura territorial do Estado de São Paulo, não permitindo a individualização dos polígonos que a compunham. Por outro lado, coberturasp e coberturasp_sf eram compostos por uma única camada ([1]) de dados, formada por 248.217 linhas e 8 e 9 colunas, respectivamente; portanto, diferindo no número de atributos a eles associados. 
+
+Através da função ncell (_), observamos que coberturasp_sp possuía uma única célula, o que retratava seu caráter classe formal espacial, ou seja, uma forma espacial de representar o território do Estado de São Paulo, sem detalhamento dos recortes internos que o compunham. Em se tratando de geomcoberturasp, verificamos que existiam 248.217 células que estruturavam o dataframe de polígonos espaciais, apresentando relativa capacidade de espacialização da informação geográfica na plotagem. Todavia, os conjuntos coberturasp e, principalmente, coberturasp_sf eram compostos por um número significativamente mais elevado de células na sua estrutura espacial, 1.985.736 e 2.233.953 respectivamente, o que permitiria detalhar melhor a informação no território paulista. 
+
+Naquilo que resguarda às informações captadas pela aplicação da função ext (_), pontuamos que o conjunto geomcoberturasp não foi analisado por esta função, pois, ela não se aplica a objetos do tipo sfc_polygon, considerando seu perfil estrutural. No que resguarda aos outros três conjuntos investigados, constatamos que eles possuíam a mesma extensão espacial, estruturados na base de valores mínimos e máximos de X e Y (xmin, xmax, ymin e ymax), conforme mostraram os resultados no Script 15. 
+
+Finalmente, sendo os quatro conjuntos provenientes da mesma fonte de dados, confirmamos através da função crs (_) que todos os objetos utilizavam o mesmo sistema de referência geográfica, sendo ele o SIRGAS 2000, e seguiam o mesmo padrão WKT para a descrição espacial dos dados.
+
+Assim, por meio da análise exploratória verificamos que coberturasp e coberturasp_sf fornecem um detalhamento mais robusto do território paulista quando comparado aos demais conjuntos estruturados. Além disso, ambos permitem a diferenciação dos polígonos que compõem o mosaico territorial do Estado, permitindo a individualização das áreas associadas a diferentes usos e coberturas, o que linearmente corrobora para seu emprego na árvore de decisão para classificação dos antromas. 
+
+Entretanto, apesar da distinção dos polígonos, as tipologias de usos e coberturas associados a eles não foi assimilada durante as plotagens realizadas, o que poderia sinalizar um erro. Todavia, consultando os metadados disponibilizados pelo IBGE, verificamos que os atributos qualitativos (caracteres) do atributo “USO 2010” referiam-se a estas tipologias de uso e cobertura do solo (IBGE, 2013b; 2017; 2018; 2020). Portanto, as tipologias territoriais foram identificadas dentro dos conjuntos e estavam delimitadas pelos atributos associados à espacialização das informações geográficas. 
+
+Ademais, constatamos que o atributo “ID_GRE”, que integrava os dois conjuntos acima tratados, descreve um atributo chave que permite a correlação com outros dados geoespaciais. Segundo os documentos do IBGE, este atributo chave foi estruturado para concatenar informações geográficas espacialmente, permitindo a junção com dados provenientes de outras análises espaciais, como demografia (IBGE, 2013b; 2017; 2018; 2020). 
+
+# Conclusões
+
+Nesta investigação fomos capazes de avaliar a estrutura dos dados sobre uso e cobertura do solo disponibilizados pelo Instituto Brasileiros de Geografia e Estatística.  Confirmamos que estes dados possibilitavam a plotagem das informações geográficas dentro da estrutura espacial do Estado de São Paulo. Ainda, visualizamos como os diferentes padrões de objetos espaciais se estruturam, permitindo o levantamento de informações que resguardavam a individualização dos recortes poligonais que compunham o mosaico paulista. Atestamos ainda que dois dos quatro conjuntos analisados permitem a integração com os dados demográficos, através dos atributos espaciais e do atributo chave utilizado pelo instituto brasileiro. Portanto, a análise exploratória dos dados sobre uso e cobertura do solo viabilizou o reconhecimento para correlação entre estes dados e os demográficos, também disponibilizados pela mesma instituição e analisados anteriormente, e os meios para darmos sequência à classificação dos antromas paulistas através da árvore de decisão em linguagem R®.  
+
+# Referências Bibliográficas
+
+ANDERSON, E. C. Making Maps with R Â: Reproducible Research. GitHub, 2021. Disponível em: <https://eriqande.github.io/rep-res-web/lectures/making-maps-with-R.html>. 
+ELLIS, E. C.; BEUSEN, A. H. W.; GOLDEWIJK, K. K. Anthropogenic Biomes: 10,000 BCE to 2015 CE. Land, v. 9, n. 5, 2020. DOI: <https://doi.org/10.3390/land9050129>. 
+ELLIS, E. C.; RAMANKUTTY, N. Putting people in the map: anthropogenic biomes of the world. Frontiers in Ecology and the Environment, v. 6, n. 8, p. 439-447, 2008. ISSN 1540-9309. DOI: <https://doi.org/10.1890/070062>. 
+GAUTHIER, N. Anthromes 12K DGG (V1) analysis code and R research compendium. Harvard Dataverse, 2021. DOI: <https://doi.org/10.7910/DVN/6FWPZ9>. 
+GOBBO, M. S. L. A. Regionalization of Brazilian Anthromes: metrological tools for quality assurance of demographic results and land use and coverage. 191p. Postgraduate Program in Metrology and Quality, National Institute of Metrology, Quality and Technology, Duque de Caxias, RJ, 2020.
+INSTITUTO BRASILEIRO DE GEOGRAFIA E ESTATÍSTICA (IBGE). Manuais Técnicos em Geociências: manual técnico de uso da terra. IBGE, 3 ed., v. 7, 171p., 2013b. Disponível em: <https://biblioteca.ibge.gov.br/visualizacao/livros/liv81615.pdf>. 
+INSTITUTO BRASILEIRO DE GEOGRAFIA E ESTATÍSTICA (IBGE). Metodologia do censo demográfico 2010. Rio de Janeiro: IBGE, 712p., 2013a.
+INSTITUTO BRASILEIRO DE GEOGRAFIA E ESTATÍSTICA (IBGE). Monitoramento da Cobertura e Uso da Terra do Brasil 2000 – 2010 – 2012-2014 em grade territorial estatística. IBGE, Rio de Janeiro, 35p., 2017.  
+INSTITUTO BRASILEIRO DE GEOGRAFIA E ESTATÍSTICA (IBGE). Monitoramento da Cobertura e Uso da Terra do Brasil 2014-2016. IBGE, Rio de Janeiro, 32p., 2018. 
+INSTITUTO BRASILEIRO DE GEOGRAFIA E ESTATÍSTICA (IBGE). Monitoramento da Cobertura e Uso da Terra do Brasil 2016-2018. IBGE, Rio de Janeiro, 27p., 2020. 
+INSTITUTO BRASILEIRO DE GEOGRAFIA E ESTATÍSTICA (IBGE). Manuais técnicos em Geociências: acesso e uso de dados geoespaciais. IBGE, v. 14, 143p., 2019. Disponível em: <https://biblioteca.ibge.gov.br/visualizacao/livros/liv101675.pdf>. 
+LOVELACE, R., NOWOSAD, J., & MUENCHOW, J. Geocomputation with R. Chapman and Hall/CRC, 353p., 2019. Disponível em: <https://www.routledge.com/Geocomputation-with-R/Lovelace-Nowosad-Muenchow/p/book/9780367670573>. 
+MACHLIS, S. Create maps in R in 10 (fairly) easy steps. Computerworld, 2017. Disponível em: <https://www.computerworld.com/article/3038270/create-maps-in-r-in-10-fairly-easy-steps.html>. 
+MORENO, M. & BASILLE, M. Drawing beautiful maps programmatically with R, sf and ggplot2 - Part 1: Basics. 2021. Disponível em: <https://r-spatial.org/r/2018/10/25/ggplot2-sf.html>. 
+
+</div>

@@ -38,57 +38,48 @@ library(rgdal)
 # Introdução
 
 ::: {style="text-align: justify"}
-De acordo com Biggs et al. (2021), uma das etapas essenciais para construção de modelos socioecológicos resguarda o levantamento de atributos que devem compor a sua estrutura analítica.
-Segundo estes autores, é imprescindível que sejam identificados, reconhecidos e analisados cada um dos atributos, de modo a reconhecer o perfil dos dados e sua possível aplicação, seja em termos descritivos, seja em termos de mapeamento das informações.
-Nesta perspectiva, Ellis (2020) apresentou que os atributos populacionais, principalmente a densidade demográfica, associados aos antromas são fundamentais para modelagem dos biomas antropogênicos, tanto em escala global, quanto em escala local.
-Nos guiando por estas diretrizes acerca dos aspectos demográficos atrelados aos antromas, realizamos neste trabalho a análise exploratória dos dados censitários produzidos pelo Instituto Brasileiro de Geografia e Estatística (IBGE).
-A análise exploratória teve por objetivo identificar os atributos que compunham os dados da operação censitária realizada pelo IBGE no ano de 2010 (IBGE, 2013a).
-Além disso, tentamos reconhecer características especiais que permitissem a integração dos dados tabulares fornecidos por esta instituição, intuindo ampliar o conjunto de dados para modelagem dos antromas localmente.
-Complementarmente, nos empenhamos em avaliar a possibilidade de plotagem destes dados, ou seja, de distribuir espacialmente as informações censitárias em mapeamentos locais.
-Esta operação foi realizada no software R®, utilizando as diretrizes investigativas apresentadas por Lovelace et al. (2019) e Anderson (2021) para a análise exploratória e para criação de mapeamentos e plotagens de informações geográficas.
-Estes autores apresentaram um formato crítico-analítico em suas obras, demonstrando a lógica envolvida para atingirmos os objetivos apenas apresentados para este trabalho.
-Ao longo da análise exploratória, apresentamos sínteses detalhadas das funções utilizadas e que foram extraídas das duas obras apenas tratadas.
-Por meio desta pesquisa, realizamos o levantamento de características dos dados censitários, nos formatos vetoriais e raster, que permitiriam o emprego deles na estruturação da árvore de decisão para classificação dos antromas localmente.
-Para tanto, ressaltamos que esta foi uma etapa essencial para construção da modelagem dos biomas antropogênicos em linguagem R®.
-Nela, reconhecemos atributos dos dados demográficos que se alinhavam àqueles identificados por Gauthier (2021) e Ellis, Beusen e Goldewijk (2020) como fundamentais para o mapeamento dos antromas no R®.
+According to Biggs et al. (2021), one of the essential steps for building socioecological models safeguards the survey of attributes that should compose their analytical structure. According to these authors, it is essential that each of the attributes be identified, recognized and analyzed, to recognize the profile of the data and its possible application, either in descriptive terms or in terms of information mapping.
+
+In this perspective, Ellis (2020) presented that population attributes, mainly demographic density, associated with anthromes are fundamental for modeling anthropogenic biomes, both on a global scale and on a local scale. Guided by these guidelines regarding the demographic aspects linked to the anthromes, we perform an exploratory analysis of the census data produced by the Brazilian Institute of Geography and Statistics (IBGE).
+
+The exploratory analysis aimed to identify the attributes that made up the data from the census operation done by the IBGE in 2010 (IBGE, 2013a). In addition, we tried to recognize special characteristics that would allow the integration of tabular data provided by this institution, intuiting to expand the data set for modeling anthromes locally. Complementarily, we endeavored to evaluate the possibility of plotting these data, that is, of spatially distributing census information in local mappings.
+
+This operation was performed in the R software, using the investigative guidelines presented by Lovelace et al. (2019) and Anderson (2021) for exploratory analysis and for creating mappings and plotting of geographic information. These authors presented a critical-analytical format in their works, demonstrating the logic involved in achieving the objectives just presented for this work. Throughout the exploratory analysis, we present detailed syntheses of the functions used and which were extracted from the two works just treated.
+
+Through this research, we accomplished a survey of characteristics of census data, in vector and raster formats, which would allow their use in structuring the decision tree for the classification of antromas locally. Therefore, we emphasize that this was an essential step for the construction of the modeling of anthropogenic biomes in R language. In it, we recognized attributes of demographic data that were aligned with those identified by Gauthier (2021) and Ellis, Beusen and Goldewijk (2020) as fundamental for mapping anthromes in R. 
+
 
 # Carregamento de Dados e Análise Exploratória de Dados Demográficos
 
-Na primeira etapa da análise exploratória dos dados demográficos, os arquivos tabulares fornecidos pelo Instituto Brasileiro de Geografia e Estatística (IBGE) foram baixados da plataforma digital da instituição.
-De acordo com o IBGE, o menor nível de desagregação de dados são os microdados do Censo 2010, ou seja, nestes dados estão inseridas as informações para cada uma das cidades investigadas pelo IBGE durante o censo demográfico.
-Há nestes dados a distribuição da população municipal em áreas urbanas e rurais e, também, em diferentes sistemáticas urbanas, como sede municipal ou fora da sede municipal.
-A página web onde estes dados encontram-se disponibilizados é:
+In the first stage of the exploratory analysis of demographic data, the tabular files provided by the Brazilian Institute of Geography and Statistics (IBGE) were downloaded from the institution's digital platform. According to the IBGE, the lowest level of data disaggregation is the 2010 Census microdata, that is, these data include information for each of the cities investigated by the IBGE during the demographic census. In these data, there is the distribution of the municipal population in urban and rural areas and, also, in different urban systematics, such as municipal headquarters or outside the municipal headquarters. The website where this data is available:
 
 <https://www.ibge.gov.br/estatisticas/sociais/populacao/9662-censo-demografico-2010.html?=&t=microdados>.
 
-Conforme apresentamos na Metodologia, optou-se por utilizar os dados referentes ao Estado de São Paulo como modelo experimental para o mapeamento dos antromas localmente, tendo em vista as diferentes tipologias territoriais presentes no Estado e sua a representatividade na economia, política e gestão nacional, bem como por sua distribuição e dimensão populacional.
-Os arquivos baixados da plataforma de dados do IBGE foram incluídos em uma pasta associada ao trabalho (diretório) para ulterior aplicação no software R®.
-Nesta pasta encontram-se a documentação de orientação fornecida pelo Instituto Brasileiro, os microdados e as tabelas referentes à população do Estado de São Paulo recenseada no Censo 2010.
-Os dados tabulares encontram-se na extensão ".xls" (Microsoft Access 365) para importação no R®.
-Sinalizamos que alguns ajustes no conteúdo das tabelas foram necessários, pois, impediam a leitura correta dos arquivos no software.
-Portanto, os arquivos tabulares foram abertos no Microsoft Access 365 para remoção de títulos e informações adicionais, como subtítulos, legendas e referências bibliográficas, que constavam nos dados originais.
-Assim, nos dados editados permaneceram somente os nomes dos atributos (primeira linha de cada coluna) e os dados censitários de cada atributo necessários para análise.
-As operações realizadas no Access 365 não são reportadas neste trabalho, mas os arquivos tabulares editados, em formato ".xls", encontram-se disponíveis no acervo digital desta Tese e podem ser acessados remotamente.
-Como informamos, todos os documentos que integram o portifólio dos dados demográficos, incluindo os scripts R e Rmarkdown, foram salvos em um único diretório, de modo a facilitar e dinamizar a operação, a manipulação e a análise de dados no software.
-A função getwd (\_) mostra o diretório de trabalho referido, local virtual onde estão todos os documentos desta investigação:
+We decided to use data referring to the State of São Paulo as an experimental model for mapping anthromes locally, considering the different territorial typologies present in the State and its representativeness in the economy, politics, and national management, as well as by their distribution and population size.
+
+The files downloaded from the IBGE data platform were included in a folder associated with the work (directory) for further application in the R software. In this folder you can find the guidance documentation provided by the Brazilian Institute, the microdata and tables referring to the population of the State of São Paulo census in the 2010 Census, import in R.
+
+We inform that some adjustments in the content of the tables were necessary, as they prevented the correct reading of the files in the software. Therefore, tabular files were opened in Microsoft Access 365 to remove titles and additional information, such as subtitles, legends, and bibliographic references, which were contained in the original data. Thus, in the edited data, only the attribute names (first line of each column) and the census data of each attribute necessary for analysis remained. The operations carried out in Access 365 are not reported in this work, but the edited tabular files, in “.xls” format, are available in the digital collection of this Thesis and can be accessed remotely.
+
+As we informed, all the documents that make up the demographic data portfolio, including the R and Rmarkdown scripts, were saved in a single directory, to facilitate and streamline the operation, manipulation, and analysis of data in the software. The getwd (_) function shows the referenced working directory, the virtual location where all the documents for this investigation are located:
+
 
 ```{r}
 getwd() 
 ```
 
-De todos os documentos baixados da plataforma do IBGE, apenas 3 delas foram utilizadas na primeira fase da análise exploratória, pois, somente estas constavam informações sobre: a localização geográfica dos municípios do Estado de São Paulo, a população em cada uma das subdivisões estabelecidas no recenseamento, a área e/ou a densidade demográfica de cada município.
-Na sequência são apresentados separadamente o carregamento de cada uma das tabelas no R® através da função read_excel (\_).
-Para que esta função operasse houve indicação do nome do arquivo e do diretório onde estavam salvas as tabelas, conforme ilustra o Script 1 a seguir.
-As tabelas foram omitidas no texto, mas podem ser visualizadas no software R® através dos códigos disponibilizados no GitHub desta Tese ou diretamente na plataforma GitHub, por meio do link:
+Of all the documents downloaded from the IBGE platform, only 3 of them were used in the first phase of the exploratory analysis, as only this contained information about: the geographic location of the municipalities in the State of São Paulo, the population in each of the subdivisions established in the census, area and/or demographic density of each municipality. Next, the loading of each of the tables in R using the read_excel (_) function is presented separately.
+
+For this function to operate, there was an indication of the name of the file and the directory where the tables were saved, as illustrated in Script 1 below. The tables were omitted in the text, but can be viewed in the R software through the codes available on GitHub platform, through the link:
+
 
 <https://github.com/maximilianogobbo/landuseplanning.git>
 
-Além disso, nesta fase preliminar foram empregadas outras duas funções subsequentemente ao carregamento.
-A função names (*), para identificar o nome dos atributos dos conjuntos de dados (primeira linha dos dados tabulares), e a função summary (*), que oferece uma síntese dos dados analisados por ela, seja em termos qualitativos (nominais), seja em termos quantitativos (numéricos e estatísticos).
+In addition, in this preliminary phase, two other functions were employed after loading. The names (_) function, to identify the name of the attributes of the data sets (first line of tabular data), and the summary (_) function, which offers a synthesis of the data analyzed by it, either in qualitative terms (nominal), or in quantitative terms (numerical and statistical).
 
-A primeira tabela carregada no software foi "populacao01.xls", utilizando a função read_excel (*). Sequencialmente, transformamos a tabela em um objeto (dataframe), que recebeu o nome populacao01. Por meio da função names (*), verificamos os nomes dos atributos deste conjunto dados.
-Posteriormente, empregamos a função summary (\_) para obtermos uma síntese qualitativa e quantitativa do dataframe populacao01.
-O Script 1 (código) ilustra este procedimento preliminar em linguagem R®.
+The first table loaded into the software was populacao01.xls, using the read_excel (_) function. Sequentially, we transform the table into an object (dataframe), which received the name populacao01. Through the names (_) function, we check the names of the attributes of this data set. Later, we use the summary (_) function to obtain a qualitative and quantitative summary of the population01 dataframe. Script 01 (code) illustrates this preliminary procedure in R language.
+
+Script 01: Loading and Preliminary Analysis of populacao01
 
 ```{r}
 library(readxl)
@@ -103,14 +94,17 @@ names(populacao01) #a função names() apresenta os títulos em cada uma das col
 summary(populacao01)
 ```
 
-A análise preliminar dos dados de populacao01 revelou alguns aspectos importantes sobre o conjunto.
-O primeiro a ser pontuado envolve a função names (*) que indica o nome dos atributos que compõem o dataframe. Estes atributos referem-se às tipologias dos setores censitários (uso do solo) para indicar o número de habitantes recenseados em cada um deles para cada um dos municípios paulistas.\
-Conforme verifica-se nos resultados de summary (*), existem 645 linhas (do inglês, length) que representam os municípios do Estado.
-Apesar de haver indicação de que os dados do dataframe sejam caracteres (do inglês, character), cada uma das linhas oferece o número de habitantes recenseados em cada uma das tipologias territoriais associadas à cidade, a qual é indicada na primeira linha do conjunto de dados.
-Outro aspecto a ser destacado nos resultados apresentados por summary (\_) resguarda ao único atributo interpretado como atributo numérico.
-De acordo com o Script 1, o atributo Código da Unidade Geográfica, apesar de ser definido por valores (números), é um descritor numérico, ou seja, uma sequência de número atribuída para determinar a área de referência.
-Esse código descritor é entendido, na engenharia de software e na modelagem de banco de dados, como atributos identificadores, os quais não se repetem ao longo do conjunto de dados e são exclusivamente atribuídos a uma entidade, que no caso do dataframe populacao01 são as cidades paulistas.
-Dito isso, realizamos o mesmo procedimento analítico com a tabela "populacao02.xls" do diretório, a partir da qual criou-se o dataframe populacao02 e que é descrito no Script 2.
+Source: the authors (2023). Caption: preliminary analysis of the population data set using the functions: names (_) and summary (_) in the R software. 
+
+Preliminary analysis of populacao01 data revealed some important aspects about the set. The first to be pointed out involves the names (_) function, which indicates the name of the attributes that make up the dataframe. These attributes refer to the typologies of the census tracts (land use) to indicate the number of inhabitants censused in each of them for each of the municipalities in São Paulo.
+
+As can be seen in the summary (_) results, there are 645 lines (length) that represent the municipalities of the State. Although there is an indication that the data in the dataframe are characters, each of the lines offers the number of inhabitants registered in each of the territorial typologies associated with the city, which is indicated in the first line of the data set.
+
+Another aspect to be highlighted in the results presented by summary (_) protects the only attribute interpreted as a numerical attribute. According to Script 1, the Geographic Unit Code attribute (of portuguese, Código da Unidade Geográfica), despite being defined by values (numbers), is a numeric descriptor, that is, a sequence of numbers assigned to determine the reference area. This descriptor code is understood, in software engineering and database modeling, as identifying attributes, which are not repeated throughout the data set and are exclusively attributed to an entity, which in the case of dataframe populacao01 are the cities of São Paulo.
+
+That said, we performed the same analytical procedure with the “poulacao02.xls” table in the directory, from which the populacao02 dataframe was created and which is described in Script 02. 
+
+Script 02: Loading and Preliminary Analysis of populacao02
 
 ```{r}
 populacao02 <- read_excel("C:/ARQUIVOS COMPUTADOR/DOUTORADO/DOUTORADO TESE/03 DADOS GEOESPACIAIS/02 DENSIDADE DEMOGRÁFICA/populacao02.xls")
@@ -124,15 +118,17 @@ names(populacao02) #a função names() apresenta os títulos em cada uma das col
 summary(populacao02) #a função summary() apresenta as informações sintetizadas acerca do objeto (tabela), onde são já indicados aspectos importantes, como a estrutura do dado vetorial, os valores máximos e mínimos do objeto, entre outras. Estas informações serão de suma importância para a análise exploratória dos dados#
 ```
 
-Observamos, através dos resultados obtidos pela função names (*), que o conjunto populacao02 possui alguns atributos com o mesmo nome e outros diferentes daqueles presentes no dataframe populacao01. Destacamos os atributos "densidade demográfica" e "área total", que são informações que versam sobre o número de indivíduos em determinada área e a área total do setor censitários, respectivamente.\
-Novamente, a função summary (*) revelou que os valores atribuídos a cada uma das tipologias territoriais, bem como as duas informações acima apresentadas, são interpretados como caracteres.
-Ao nos depararmos com esse resultado, retomamos o conjunto de dados no Access 365 para tentar identificar o porquê desta resposta da função.
-Identificamos que o R® interpreta como caractere as informações tabulares do IBGE devido ao espaçamento presente nas informações numéricas, como evidenciamos na Tabela 1.\
-Conforme destaca-se na Tabela 1, os valores associados às unidades numéricas possuem um espaçamento entre centenas e milhares, como verifica-se no cruzamento entre Adamantina e Área urbanizada.
-Essa espaçamento impede que o software leia e interprete a informação diretamente como valor, transformando-a, consequentemente, em atributo nominal (caractere).
-Diferentemente disso, o atributo Código da Unidade Geográfica é interpretado novamente como atributo numérico, incorrendo no mesmo problema identificado anteriormente para populacao01.
-Apesar dos problemas identificados na leitura das duas tabelas carregadas até aqui, realizamos o mesmo procedimento com o arquivo "populacao03.xls", que deu origem ao dataframe populacao03, como mostra o Script 3.
-Além de dar sequência a análise preliminar, objetivamos verificar se o problema se repete também neste conjunto de dados.
+Source: the authors (2023). Caption: preliminary analysis of the population data set using the functions: names (_) and summary (_) in the R software. 
+
+We observed, through the results obtained by the names (_) function, that the set populacao02 has some attributes with the same name and others different from those present in the dataframe populacao01. We highlight the attributes “demographic density” and “total area”, which are information that deal with the number of individuals in each area and the total area of the census sector, respectively.
+
+Again, the summary (_) function revealed that the values assigned to each of the territorial typologies, as well as the two pieces of information presented above, are interpreted as characters. When faced with this result, we resumed the data set in Access 365 to try to identify the reason for this response from the function. We identified that the R interprets the IBGE tabular information as a character due to the spacing present in numerical information, as shown in Table 02 (in .txt view). 
+
+As highlighted in Table 02, the values associated with numerical units are spaced between hundreds and thousands, as seen in the intersection between Adamantina and urbanized area. This spacing prevents the software from reading and interpreting the information directly as a value, consequently transforming it into a nominal attribute (character). In contrast, the Geographical Unit Code attribute is interpreted again as a numeric attribute, incurring the same problem previously identified for populacao01.
+
+Despite the problems identified when reading the two tables loaded so far, we performed the same procedure with the populacao03.xls file, which gave rise to the populacao03 dataframe, as shown in Script 03. In addition to continuing the preliminary analysis, we aimed to verify whether the problem is also repeated in this dataset. 
+
+Script 03: Loading and Preliminary Analysis of populacao03
 
 ```{r}
 populacao03 <- read_excel("C:/ARQUIVOS COMPUTADOR/DOUTORADO/DOUTORADO TESE/03 DADOS GEOESPACIAIS/02 DENSIDADE DEMOGRÁFICA/populacao03.xls")
@@ -146,15 +142,17 @@ names(populacao03) #a função names() apresenta os títulos em cada uma das col
 summary(populacao03) #a função summary() apresenta as informações sintetizadas acerca do objeto (tabela), onde são já indicados aspectos importantes, como a estrutura do dado vetorial, os valores máximos e mínimos do objeto, entre outras. Estas informações serão de suma importância para a análise exploratória dos dados#
 ```
 
-No Script 3, além de apresentar os resultados das duas funções analíticas, reportamos também as 10 primeiras linhas do dataframe populacao03, apresentadas logo após o carregamento dos dados através da função read_excel (*). De acordo com o que trouxemos na Tabela 1, verificamos que o mesmo problema de espaçamento entre as unidades centenas e milhares dos valores dos atributos é reportado no código R para os atributos "População residente Absoluta" e "População residente absoluta total urbana", por exemplo. A confirmação do erro de leitura de valores foi reportada durante a análise da função summary (*), a qual retorna para os dois atributos os valores compreendidos como caracteres.\
-Por outro lado, observamos que no conjunto populacao03 existem outros atributos numéricos em sua estrutura, sendo eles: Total Relativa (%), TotalRelativa (%) e Na sede municipal Relativa (%)/n.
-Estes atributos, todavia, representam proporções estatísticas sobre a população em cada uma das cidades paulistas, não propriamente sendo atribuídas a dimensões populacionais, como concentração ou densidade demográfica.
-Assim, verificamos que há, na estrutura de dados, um problema recorrente, proveniente dos dados fornecidos pelo IBGE.
-Além disso, reiteramos que o atributo identificador "Códigos da Unidades Geográficas" integra também este dataframe, sendo este o único indicativo para o posicionamento geográfico das informações presentes nos conjuntos populacao01, populacao02 e populacao03.
-Entretanto, não há na estrutura deste atributo nos três conjuntos nenhuma definição direta de informações que espacializem a informação geográfica, como longitude, latitude e altitude dos pontos ou polígonos referentes aos setores censitários.\
-Mesmo identificando estes empecilhos apenas tratados, expandimos a análise preliminar com outras duas funções.
-A função class (*) para reconhecer o formato estrutural dos três conjuntos e a função dim (*) que fornece o número de linhas e colunas dos conjuntos de dados.
-O Script 4 adiante demonstra os resultados obtidos.
+Source: the authors (2023). Caption: preliminary analysis of the population data set using the functions: names (_) and summary (_) in the R software. 
+
+In Script 03, in addition to presenting the results of the two analytical functions, we also report the first 10 lines of the dataframe populacao03, presented right after loading the data through the read_excel (_) function. According to what we brought in Table 02, we verified that the same spacing problem between the hundreds and thousands of units of the attribute values is reported in the R code for the attributes “Absolute resident population” and “Absolute total urban resident population”, by example. The confirmation of the error in reading values was reported during the analysis of the summary (_) function, which returns the values understood as characters for both attributes.
+
+Still, we observe that in the populacao03 there are other numerical attributes in its structure, namely: Relative Total (%), Relative Total (%) and Relative in the municipal seat (%)\n. These attributes, however, represent statistical proportions of the population in each of the cities in São Paulo, not exactly being attributed to population dimensions, such as concentration or demographic density.
+
+Thus, we verified that there is, in the data structure, a recurrent problem, arising from the data provided by the IBGE. In addition, we reiterate that the identifying attribute Codes of Geographical Units is also part of this dataframe, which is the only indication for the geographic positioning of the information present in the sets populacao01, populacao02 and populacao03. However, in the structure of this attribute in the three sets, there is no direct definition of information that spatialize geographic information, such as longitude, latitude and altitude of points or polygons referring to census tracts.
+
+Even identifying these obstacles that were just treated, we expanded the preliminary analysis with two other functions. The class (_) function to recognize the structural format of the three sets and the dim (_) function which gives the number of rows and columns of the data sets. Script 4 below demonstrates the results obtained.
+
+Script 04: Application of the functions class (_) and dim (_) in the Preliminary Analysis
 
 ```{r}
 class(populacao01)
@@ -166,12 +164,17 @@ dim(populacao02)
 dim(populacao03)
 ```
 
-Observamos, nos resultados gerados pela função class (*), que os três conjuntos de dados (populacao01, populacao02 e populacao03) são do tipo dataframes, ou seja, são estruturados seguindo a distribuição da informação em linhas e colunas (tabular, da sigla inglesa, tbl). Nas colunas dos dataframes são reportadas as informações que caracterizam os municípios do Estado de São Paulo, ou seja, a resposta para cada um dos atributos identificados na primeira linha dos dataframes. Por outro lado, a função dim (*) reportou que o dataframe populacao01 é composto por 645 linhas e 10 colunas, enquanto populacao02 é estruturado em 645 linhas e 8 colunas e populacao03 em 645 linhas e 10 colunas.
-Diante dessas informações, confirmamos que todas as linhas do dataframe populacao01 possuem correspondência em populacao02 e populacao03, ou seja, todas as cidades apresentadas em populacao01 estão presentes nos outros dois dataframes.
-Todavia, constatamos que o número de colunas diverge entre os conjuntos de dados, fato que havíamos observado durante a aplicação das funções names (*) e summary (*).
-Isto ocorre porque existem atributos que estão presentes em um que não integram os outros e vice-versa, alterando assim o número de colunas em cada um deles.
-Retomando o atributo "código da unidade geográfica" presente nos três dataframes, realizamos uma análise específica para identificar como as informações para cada cidade são lidas pelo software.
-Utilizamos novamente a função summary (\_) e filtramos a coluna deste atributo por meio do emprego de colchetes [], os quais são utilizados para especificar o atributo, como demonstramos no Script 5.
+Source: the authors (2023). Caption: Preliminary analysis of the datasets using the functions: class (_) and dim (_) in the R software. 
+
+We observed, in the results generated by the class (_) function, that the three sets of data (populacao01, populacao02 and populacao03) are of the dataframe type, that is, they are structured following the distribution of information in rows and columns (tabular, from the English acronym, tbl). The dataframe columns report the information that characterize the municipalities of the State of São Paulo, that is, the answer for each of the attributes identified in the first line of the dataframes.
+
+On the other hand, the dim (_) function reported that the dataframe populacao01 is composed of 645 rows and 10 columns, while populacao02 is structured in 645 rows and 8 columns and populacao03 in 645 rows and 10 columns. In view of this information, we confirm that all lines of the populacao01 dataframe have some correspondence in populacao02 and populacao03, that is, all cities presented in populacao01 are present in the other two dataframes.
+
+However, we found that the number of columns differs between the data sets, a fact that we had observed during the application of the names (_) and summary (_) functions. This occurs because there are attributes that are present in one that are not part of the others and vice versa, thus changing the number of columns in each one of them.
+
+Returning to the geographical unit code attribute present in the three dataframes, we performed a specific analysis to identify how the information for each city is read by the software. We again use the summary (_) function and filter the column of this attribute using square brackets [], which are used to specify the attribute, as demonstrated in Script 05. 
+
+Script 05: Analysis of the "Geographic Unit Code" attribute
 
 ```{r}
 summary(populacao01["Código da Unidade Geográfica"])
@@ -179,27 +182,27 @@ summary(populacao02["Código da Unidade Geográfica"])
 summary(populacao03["Código da Unidade Geográfica"])
 ```
 
-Em consonância aquilo que apresentamos anteriormente, a função summary (\_) retornou informações estatísticas sobre os dados do atributo.
-Acima verifica-se que são apresentados os valores mínimo (min.), primeiro quartil (1st Qu.), mediana, média, terceiro quartil (3rd Qu.) e máximo (max.) do conjunto de dados.
-Portanto, confirmamos que a interpretação deste atributo identificador pelo software não é feita como código, mas como valores numéricos.
-Isso impede a plotagem direta dos dados no mapeamento, requerendo outras informações geográficas para tal.
-Nesta perspectiva, realizamos uma nova busca na plataforma do IBGE para encontrarmos os arquivos referentes ao atributo identificador "Códigos das Unidades Geográficas".
-Estes arquivos encontram-se disponíveis no link a seguir e podem ser acessados remotamente pelos usuários.
-Eles foram baixados e indexados no mesmo diretório de trabalho da análise exploratória.
+Source: the authors (2023). Caption: analysis of the “geographical unit code” attribute using the summary (_) function and selecting the attribute using square brackets []. 
+
+In line with what we presented earlier, the summary (_) function returned statistical information about the attribute data. Above, the minimum (min.), first quartile (1st Qu.), median, mean, third quartile (3rd Qu.) and maximum (max.) values of the data set are presented. Therefore, we confirm that the interpretation of this identifying attribute by the software is not done as a code, but as numerical values. This prevents the direct plotting of data in the mapping, requiring other geographic information to do so.
+
+In this perspective, we carried out a new search on the IBGE platform to find the files referring to the identifier attribute Codes of Geographical Units. These files are available at the following link and can be accessed remotely by users. They were downloaded and indexed in the same working directory as the exploratory analysis.
 
 <https://www.ibge.gov.br/geociencias/organizacao-do-territorio/estrutura-territorial/27385-localidades.html?=&t=acesso-ao-produto>.
 
-Nesta busca, captamos os arquivos raster (shapefiles) disponibilizados pelo IBGE, os quais trazem o conjunto de informações geográficas (geometria dos códigos: longitude, latitude e altitude) que representam os Códigos das Unidades Geográficas dos 3 dataframes (populacao01, populacao02 e populacao03).
-Intuíamos com estes shapefiles conectar os dados censitários dos três conjuntos às estruturas espaciais das suas localidades (setor censitário).
-Para tanto, o primeiro passo foi o carregamento do arquivo raster no R por meio da função shapefile (\_), a qual é utilizada para ler dados raster no software.
-O conjunto de dados carregados por esta função recebeu o nome de localidades_br, convertendo-o em um objeto para análise exploratória, conforme ilustra o Script 6.
+In this search, we captured the raster files (shapefiles) made available by the IBGE, which bring the set of geographic information (geometry of the codes: longitude, latitude and altitude) that represent the Codes of the Geographical Units of the 3 dataframes (populacao01, populacao02 and populacao03). Functions for loading raster data and transforming spatial objects Functions for loading raster data and transforming spatial objects. With these shapefiles, we intuited to connect the census data of the three sets to the spatial structures of their locations (census sector). 
+
+Therefore, the first step was to load the raster file in R using the shapefile (_) function, which is used to read raster data in the software. The set of data loaded by this function was named localidades_br, converting it into an object for exploratory analysis, as illustrated in Script 06.  
+
+Script 06: Loading raster data from localidades_br
 
 ```{r}
 localidades_br <- shapefile("BR_Localidades_2010_v1.shp")
 ```
 
-Após o carregamento dos dados raster, realizamos os mesmos procedimentos analíticos até aqui demonstrados.
-Utilizamos a função names (*) para identificar os nomes dos atributos que integram o conjunto de dados localidades_br. Por outro lado, a função summary (*) foi empregada para reconhecer a estrutura qualitativa e quantitativa deste objeto (Script 7).
+After loading the raster data, we perform the same analytical procedures demonstrated so far. We use the names (_) function to identify the names of the attributes that make up the dataset localidades_br. On the other hand, the summary (_) function was used to recognize the qualitative and quantitative structure of this object (Script 07). 
+
+Script 07: Preliminary analysis of localidades_br
 
 ```{r}
 names(localidades_br)
@@ -212,11 +215,13 @@ summary(localidades_br)
 summary(localidades_br["TIPO"])
 ```
 
-Com base nos nomes dos atributos, verificamos que a coluna "NM_UF", referente ao "Nome da Unidade da Federação", permite que filtremos somente os dados tocantes ao Estado de São Paulo.
-Isso permite o recorte do conjunto de dados para atender a área modelo que focalizamos nesta Tese.
-Ademais, verificamos que o dataframe de localidade_br é composto por pontos distribuídos geograficamente, tendo em vista a presença dos atributos longitude (LONG), latitude (LAT) e altitude (ALT).
-Além disso, há no dataframe características estruturais que auxiliam na espacialização das informações geográficas, sendo elas apresentadas no Script 7 pelas informações coords.x1 e coords.x2.
-De modo a testar a espacialização das informações constantes no conjunto de dados localidades_br, aplicamos a função plot (\_) na sequência analítica para visualizarmos a distribuição dos pontos descritos pelo dataframe, como verifica-se na Figura 3.
+Based on the names of the attributes, we verified that the column NM_UF, referring to the “Name of the Federation Unit”, allows us to filter only the data related to the State of São Paulo. This allows clipping the data set to suit the model area that we focus on in this thesis.
+
+Furthermore, we verified that the dataframe of localidades_br is composed of geographically distributed points, considering the presence of the attributes longitude (LONG), latitude (LAT) and altitude (ALT). In addition, there are structural characteristics in the dataframe that help spatialize the geographic information, which are presented in Script 07 by the information coords.x1 and coords.x2.
+
+To test the spatialization of the information contained in the localidades_br data set, we applied the plot (_) function in the analytical sequence to visualize the distribution of the points described by the dataframe, as shown in Figure 01. 
+
+Figure 01: Plotting of data from localidades_br
 
 ```{r}
 plot(localidades_br) 
@@ -229,42 +234,51 @@ plot(localidades_br)
 dev.off
 ```
 
-A plotagem ilustra cada um dos 21.886 pontos que integram o conjunto de dados, utilizando para tal plotagem as coordenadas geográficas descritas para cada uma das localidades.
-Os espaços em branco, onde não há presença de pontos, representam áreas onde não há presença de população recenseada e/ou que as populações amostradas nestas áreas foram consideradas dentro de setores censitários próximos a sua área de estabelecimento.
-Seguindo as diretrizes de análise exploratória apresentadas por Lovelace et al. (2019), transformamos o objeto localidades_br em dois tipos de objetos diferentes para as próximas investigações.
-A primeira conversão deste objeto foi para um objeto sf, ou seja, um conjunto de dados simples (do inglês, simple feature collection).
-Para tanto, utilizamos a estrutura apresentada na primeira linha de comando do Script 8 a seguir.
-Na segunda linha de comando, confirmou-se a criação do conjunto de dados (objeto) localbr_sf:
+Source: the authors (2023). Caption: figure produced through the function plot (_), using the data set localidades_br. Outline in red representing the Brazilian territorial polygon, inserted to demonstrate the distribution of points.
+
+The plot illustrates each of the 21,886 points that make up the data set, using the geographic coordinates described for each of the locations for such plotting. The blank spaces, where there are no dots, represent areas where there is no census population and/or that the populations sampled in these areas were considered within census tracts close to their area of establishment.
+
+Following the exploratory analysis guidelines presented by Lovelace et al. (2019), we transformed the localidades_br object into two different types of objects for the next investigations. The first conversion of this object was to an sf object, that is, a simple feature collection. To do this conversation, we use the structure presented in the first command line of Script 08 below. In the second command line, the creation of the dataset (object) localbr_sf was confirmed:
+
+Script 08: Creating the localbr_sf dataset.
 
 ```{r}
 localbr_sf = st_as_sf(localidades_br)
 localbr_sf
 ```
 
-Os resultados apresentam que o conjunto localbr_sf foi criado corretamente, sendo este composto por 21.886 linhas (do inglês, features) e 22 atributos (do inglês, fields) descritos em colunas.
-A geometria do conjunto de dados (do inglês, geometry type) encontra-se no formato de pontos (do inglês, points) e é estruturada nas dimensões XY, possuindo valores integrados de xmin, ymin, xmax e ymax dentro da estrutura.
-Para além, o conjunto de dados possui o sistema de referência geográfica (CRS) utilizado pelo IBGE na sua estrutura, ou seja, o SIRGAS 2000.
-Destacamos ainda que os 22 atributos que integram o conjunto de dados são: *ID, CD_GEOCODI, TIPO, CD_GEOCODB, NM_BAIRRO, CD_GEOCODS, NM_SUBDIST, CD_GEOCODD, NM_DISTRIT CD_GEOCODM, MUNICIPIOS, NM_MICRO, NM_MESO, ESTADOS, CD_NIVEL, CD_CATEGOR, NM_CATEGOR, NM_LOCALID, LONG, LAT, ALT, GMRotation e GEOMETRY*.
-Destes, confirmamos a presença de atributos associados ao posicionamento geográfico da informação, como longitude (LONG), latitude (LAT), altitude (ALT) e geometria (GEOMETRY).
-Além disso, temos a presença das subdivisões territoriais descritas no conjunto de dados localbr_sf, pois, verificamos que, sequencialmente, o formato tabular dos dados parte do menor nível de agregação, sendo ele bairro (NM_BAIRRO), e chegando a Estados.
-Estes resultados, portanto, nos forneceram indícios para compreender a estrutura dos dados e para identificar atributos relevantes para a mineração dos dados em R®.
-A segunda conversão realizada no conjunto de dados localidades_br foi feita para um objeto do tipo sp (espacial, do inglês, spatial).
-Na primeira linha do Script 9 há a demonstração do código para tal conversão; enquanto na segunda, confirmou-se a criação do objeto localbr_sp.
+Source: the authors (2023). Caption: conversion of the dataset localidades_br into an object of type sf, which was named localbr_sf. Such a conversion was performed by the st_as_sf (_) function. In the script, only the first 10 lines that integrate the data set are reported. 
+
+The results show that the set localbr_sf was created correctly, which is composed of 21.886 lines (features) and 22 attributes (fields) described in columns. The geometry of the dataset (geometry type) is in points format and is structured in XY dimensions, having integrated values of xmin, ymin, xmax and ymax within the structure. In addition, the data set has the geographic reference system (CRS) used by the IBGE in its structure, that is, the SIRGAS 2000.
+
+We also highlight that the 22 attributes that make up the data set are: ID, CD_GEOCODI, TIPO, CD_GEOCODB, NM_BAIRRO, CD_GEOCODS, NM_SUBDIST, CD_GEOCODD, NM_DISTRIT CD_GEOCODM, MUNICIPIOS, NM_MICRO, NM_MESO, ESTADOS, CD_NIVEL, CD_CATEGOR, NM_CATEGOR, NM_LOCALID, LONG, LAT, ALT, GMRotation e GEOMETRY. 
+
+Of these, we confirmed the presence of attributes associated with the geographic positioning of the information, such as longitude (LONG), latitude (LAT), altitude (ALT) and geometry (GEOMETRY). In addition, we have the presence of the territorial subdivisions described in the localbr_sf data set, since we verified that, sequentially, the tabular format of the data starts from the lowest level of aggregation, being neighborhood (NM_BAIRRO), and reaching States. These results, therefore, provided us with clues to understand the structure of the data and to identify relevant attributes for data mining in R.
+
+The second conversion performed on the localidades_br data set was made to an object of type sp (spatial). In the first line of Script 09 there is a demonstration of the code for such a conversion; while in the second, the creation of the localbr_sp object was confirmed.
+
+Script 09: Conversion of localidades_br into a spatial type of object.
 
 ```{r}
 localbr_sp = as(localidades_br, "Spatial")
 localbr_sp
 ```
 
-Os resultados indicam que o conjunto localbr_sp pertence a classe (do inglês, class) de objetos espaciais (do inglês, spatial) e integram um conjunto único de informações (features).
-Ademais verificamos que o conjunto possui valores mínimos e máximos de XY, os quais determinam sua extensão (do inglês, extent) para plotagem dos dados, e que estão associados à estrutura CRS do conjunto de dados.
-Após a conversão de localidades_br em localbr_sf e localbr_sp, realizamos a plotagem dos dados.
-Como não houve nenhuma alteração na estrutura do primeiro conjunto (composição tabular dos dados), a plotagem dos dois outros conjuntos foi a mesma apresentada na Figura 3.
-Assim, ocultamos este resultado neste texto, mas pode ser verificado no código disponibilizado no GitHub associado a este trabalho.
-Por outro lado, tentamos individualizar os dados do Estado de São Paulo nos três conjuntos apenas tratados, tendo em vista o modelo experimental por nós determinado.
-Para tal, utilizamos a função filter (*) para filtrar os dados de São Paulo, utilizando o atributo ESTADOS como parâmetro para a operação. Nos conjuntos localidades_br e localbr_sf foi possível realizar a filtragem, porém, inúmeros valores de atributos eram perdidos dentro dos conjuntos. Em contrapartida, em localbr_sp a função não se aplicou, pois, conforme mostraram os resultados acima, este dataframe é estruturado em uma única linha de dados (único conjunto), não permitindo sua fragmentação (filtragem de dados). Ambas as filtragens não são reportadas aqui, pois envolvem uma quantidade imensa de resultados que não foram aproveitados ao longo do trabalho; mas os resultados da tentativa de filtrar os dados constam no código disponibilizado no GitHub deste trabalho. Intuindo individualizar os dados do Estado de São Paulo, retornamos ao programa Microsoft Access 365 (formato inicial do conjunto de dados disponibilizados pelo IBGE) para filtrar os dados de localidades_br. Filtramos o conjunto de dados utilizando o atributo "NM_UF", que resguarda os Nomes das Unidades da Federação, e selecionando somente as linhas que possuíam "São Paulo" como dado de resposta (caractere inserido na linha da coluna NM_UF). Somente estes dados foram copiados para uma planilha Excel 365 e salvos na extensão ".xls" com o nome localsp.xls. Reiteramos que, seja o arquivo original (Access 365), seja o arquivo produzido (Excel 365) encontram-se na acervo digital deste trabalho e são acessíveis remotamente. Após a produção do arquivo localsp.xls, retornamos ao R®, onde buscamos o arquivo no diretório do trabalho para carregamento no software através da função read_excel (*).
-Conjuntamente ao carregamento, criamos o objeto localsp, como ilustra o Script 10.
-Posteriormente a isso, confirmamos a criação do objeto.
+Source: the authors (2023). Caption: conversion of the dataset localidades_br into an object of type sp, which was named localbr_sp. This conversion was carried out by the structure localbr_sp=as(localidades_br, “spatial”). The structure of the created object is presented in the script. 
+
+The results indicate that the set localbr_sp belongs to the class of spatial objects and integrates a single set of information (features). Furthermore, we verified that the set has minimum and maximum XY values, which determine its extent for plotting the data, and which are associated with the CRS structure of the data set.
+
+After converting localidades_br to localbr_sf and localbr_sp, we plotted the data. As there was no change in the structure of the first set (data tabular composition), the plot of the other two sets was the same as shown in Figure 01. Thus, we have hidden this result in this text, but it can be verified in the code available on GitHub associated with this job.
+
+In contrast, we tried to individualize the data from the State of São Paulo in the three sets just treated, in view of the experimental model determined by us. To do so, we used the filter (_) function to filter data from São Paulo, using the ESTADOS attribute (of English, States) as a parameter for the operation. In the sets localidades_br and localbr_sf it was possible to filter, however, many attribute values were lost within the sets.
+
+However, in localbr_sp the function was not applied, because, as shown in the results above, this dataframe is structured in a single line of data (single set), not allowing its fragmentation (data filtering). Both filtering’s are not reported here, as they involve an immense number of results that were not used throughout the work; but the results of the attempt to filter the data can be found in the code available on GitHub for this work.
+
+Intuiting to individualize the data for the State of São Paulo, we returned to the Microsoft Access 365 (initial format of the data set made available by the IBGE) to filter the data from localidades_br. We filtered the data set using the NM_UF attribute, which protects the Names of the Federation Units, and selecting only the rows that had “São Paulo” as response data (character inserted in the line of column NM_UF). Only these data were copied to an Excel 365 spreadsheet and saved in the “.xls” extension with the name localsp.xls. We reiterate that both the original file (Access 365) and the produced file (Excel 365) are in the digital collection of this work and are accessible remotely.
+
+After producing the localsp.xls file, we returned to R, where we looked for the file in the work directory to be loaded into the software using the read_excel (_) function. Together with the loading, we create the localsp object, as shown in Script 10. After that, we confirm the creation of the object. 
+
+Script 10: Loading data and creating the localsp object.
 
 ```{r}
 localsp <- read_excel("C:/ARQUIVOS COMPUTADOR/DOUTORADO/DOUTORADO TESE/03 DADOS GEOESPACIAIS/02 DENSIDADE DEMOGRÁFICA/localsp.xls")
@@ -278,10 +292,13 @@ localsp
 head(localsp)
 ```
 
-A conferência da criação do objeto permitiu que obtivéssemos algumas informações relevantes sobre o conjunto localsp.
-Os resultados no Script 10 indicaram que o objeto se estrutura em modelo de dataframe (tradução livre do inglês, tibble), o qual é composto por 2.142 linhas (do inglês, rows) e 21 variáveis (do inglês, variables) distribuídas em colunas, que retratam os atributos deste conjunto de dados.
-Os nomes dos atributos (variáveis) foram destacados no Script acima e pontuamos que são os mesmos atributos que compõem localidades_br, excetuando o atributo geometria (GEOMETRY) que não era passível de filtragem no Access 365 e, portanto, não integra o conjunto localsp.
-Seguindo as mesmas funções anteriormente utilizadas na análise preliminar (Quadro 10), exploramos o conjunto de dados localsp, intuindo identificar características relevantes para a análise exploratória, como demonstramos no Script 11.
+Source: the authors (2023). Caption: loading data from localsp.xls and creating the localsp object. In the script, the format of the data set and the attributes (variables) that constitute it are highlighted.  
+
+The object creation conference allowed us to obtain some relevant information about the localsp set. The results in Script 10 indicated that the object is structured in a dataframe model (tibble), which is composed of 2,142 lines (rows) and 21 variables (variables) distributed in columns, that portray the attributes of this dataset. The names of the attributes (variables) were highlighted in the above script, and we point out that they are the same attributes that compose localidades_br, except for the attribute geometry (GEOMETRY) which was not subject to filtering in Access 365 and, therefore, is not part of the localsp set.
+
+Following the same functions previously used in the preliminary analysis (Script 10), we explored the localsp data set, intuiting to identify relevant characteristics for the exploratory analysis, as we demonstrated in Script 11.
+
+Script 11: Preliminary analysis of localsp
 
 ```{r}
 names(localsp)
@@ -293,29 +310,33 @@ dim(localsp)
 class(localsp)
 ```
 
-Através da função names (*) confirmamos os nomes dos atributos associados ao conjunto de dados, ou seja, o nome das variáveis que integram a primeira linha do objeto. Constatamos ainda que localsp é composto por diferentes características espaciais, como "LONG" (longitude), "LAT" (latitude), "ALT" (altitude) e "CD_GEOCODIGO". O atributo CD_GEOCODIGO refere-se ao geocódigo estabelecido pelo IBGE para identificar posições geográficas de polígonos espaciais de cada um dos setores censitários, como havíamos tratado anteriormente. Aditivamente, a função dim (*) evidenciou que o conjunto é composto por 2142 linhas e 21 colunas, as quais descrevem atributos dos dados.
-Ademais, a função class (*) revelou que o formato de apresentação dos dados de localsp está estruturado no modelo tabular (da sigla, tbl) e constitui um dataframe (df). Complementarmente, a função summary (*) expandiu as informações sobre cada um dos atributos associados a localsp.
-Por meio de sua aplicação, diferentes características foram sumarizadas.
-Para os atributos que assumiam o perfil de caractere (do inglês, character), a função retornou o número de linhas em cada coluna (do inglês, length), a classe das informações na coluna (do inglês, class) e o modelo de apresentação (do inglês, mode).
-Para as informações que não eram caracteres, houve o retorno de resultados estatísticos para os valores numéricos associados aos atributos, como: valor mínimo, primeiro e terceiro quartil, mediana, média e máximo.
-Pontuamos que os resultados estatísticos, no caso de localsp, não são relevantes para a análise exploratória.
-Porém, são estes resultados que demonstram quais atributos são interpretados pelo software como atributos numéricos.
-Assim, identificamos que os atributos longitude (LONG), latitude (LAT) e altitude (ALT) possuem dados numéricos para cada um dos setores censitários.
-Isto favorece o emprego dessas informações para a espacialização da informação geográfica pontual, como identificamos nos conjuntos populacao01, populacao02 e populacao03.
-Todavia, para que haja a conexão entre os dados dos três conjuntos apenas tratados e os dados para espacialização da informação (long, lat e alt) presentes em localsp tornou-se imperioso a identificação de um atributo chave que estivesse presente nos quatro dataframes.
-Nesta perspectiva, retomamos o supradito sobre o geocódigo do IBGE, o qual, como demonstramos nos Scripts 1, 2 e 3, são retratados pelo atributo "código da unidade geográfica".
-Assim, verificamos se os códigos constantes nestes 4 conjuntos de dados eram coincidentes, ou seja, descreviam um atributo chave para a conexão entre as informações de localsp e as informações censitárias descritas em populacao01, populacao02 e populacao03.
-Esta operação foi realizada utilizando a função select (*), que permitiu selecionar somente as colunas dos 4 dataframes associadas a este atributo, que em localsp é reportada como "CD_GEOCODIGO", enquanto nos outros três recebe o nome de "Código da Unidade Geográfica". Quando comparados, inúmeras linhas do conjunto localsp não possuíam correspondência nos três conjuntos populacionais. De acordo com os resultados apresentados no Script 4, constatamos por meio da função dim (*) que os dataframes populacionais são formados por 645 linhas, enquanto no Script 11 identificamos que localsp é formado por 2.142 linhas.
-Esta diferença significativa entre os dataframes resguarda, em síntese, na divisão territorial estruturada pelo Instituto Brasileiro.
-Como apuramos na documentação do Censo Demográfico 2010 (IBGE, 2013a), os pontos amostrais que integram os dados de localsp são mais numerosos porque detalham a malha territorial de forma mais robusta, ou seja, fracionam ainda mais as porções territoriais, chegando ao nível de setor censitário.
-Da outra parte, temos em populacao01, populacao02 e populacao03 a aglomeração dos dados dos setores censitários pertencentes ao mesmo município.
-No entanto, destacamos que, apesar da junção dos setores censitários dentro do atributo município, há nos Scripts 1, 2 e 3 a demonstração da fragmentação da distribuição das populações municipais em áreas urbanas e rurais, o que nos interessa para construção da árvore de decisão.
-Portanto, para guiarmos a ulterior junção das informações espaciais (long, lat e alt) de localsp com os três dataframes populacionais, utilizamos como referência (direcionamento) os códigos presentes em populacao01, populacao02 e populacao03 e unimos aqueles que constavam em localsp.
-Isto se deu pela função join (*), a qual permite a inserção de informações de um dataframe em outro, utilizando um atributo como direcionador para sua inserção. Para tal, foi preciso renomear o atributo "Código da Unidade Geográfica" dos três conjuntos populacionais para "CD_GEOCODIGO", o que foi feito através da função rename (*).
-Realizamos esta operação para que a função join (*) encontrasse diretamente o atributo chave entre os conjuntos de dados, permitindo assim a inserção dos dados espaciais de localsp nos três conjuntos populacionais. Estas alterações nomenclaturais não são apresentadas no corpo do texto, mas encontram-se no código R disponibilizado no repositório GitHub deste trabalho. No que resguarda a função join (*), apresentamos os resultados também no código do repositório, tendo em vista o número de linhas que integram o objeto.
-Dito isso, retomamos o objeto localsp para a análise da espacialização dos dados as quais nos referimos precedentemente.
-Sendo os atributos latitude ("LAT"), longitude ("LONG") e altitude ("ALT") essenciais para a plotagem dos dados, utilizamos um filtro interno de colunas na função plot (*), o que foi feito através do emprego de colchetes "[]" na sequência da função, como ilustra o código sobre a Figura 4. As três informações agora tratadas encontravam-se nas colunas de 18, 19 e 20 do dataframe, como identificamos anteriormente na função names (*) do Script 11.
-Portanto, utilizamos somente as três colunas para a plotagem do objeto localsp, como demonstramos na Figura 4 a diante:
+Source: the authors (2023). Caption: Preliminary analysis of the localsp set. The script presents the results obtained by applying the names (_), dim (_), class (_) and summary (_) function.  
+
+Using the names (_) function, we confirm the names of the attributes associated with the dataset, that is, the names of the variables that make up the first line of the object. We also found that localsp is composed of different spatial characteristics, such as LONG (longitude), LAT (latitude), ALT (altitude) and CD_GEOCODE. The CD_GEOCODIGO attribute refers to the geocode established by the IBGE to identify geographic positions of spatial polygons in each of the census tracts, as discussed earlier.
+
+Additionally, the dim (_) function showed that the set is composed of 2.142 rows and 21 columns, which describe data attributes. Furthermore, the class (_) function revealed that the localsp data presentation format is structured in the tabular model (from the acronym, tbl) and constitutes a dataframe (df).
+
+In addition, the summary (_) function expanded the information about each of the attributes associated with localsp. Through its application, different characteristics were summarized. For attributes that assumed the character profile, the function returned the number of lines in each column (length), the class of information in the column and the presentation model (mode). For information that was not characters, statistical results were returned for numerical values associated with attributes, such as: minimum value, first and third quartiles, median, mean, and maximum.
+
+We point out that the statistical results, in the case of localsp, are not relevant for the exploratory analysis. However, these results demonstrate which attributes are interpreted by the software as numeric attributes. Thus, we identified that the attributes longitude (LONG), latitude (LAT) and altitude (ALT) have numerical data for each of the census tracts. This favors the use of this information for the spatialization of specific geographic information, as we identified in the sets populacao01, populacao02 and populacao03. 
+
+However, for there to be a connection between the data from the three sets just treated and the data for the spatialization of information (LONG, LAT and ALT) present in localsp, it became imperative to identify a key attribute that was present in the four dataframes. In this perspective, we return to what was said about the IBGE geocode, which, as we demonstrated in Scripts 01, 02 and 03, are portrayed by the attribute code of the geographical unit.
+
+Thus, we verified whether the codes contained in these 4 data sets coincided, that is, they described a key attribute for the connection between localsp information and census information described in populacao01, populacao02 and populacao03. This operation was carried out using the select (_) function, which allowed selecting only the columns of the 4 dataframes associated with this attribute, which in localsp is reported as CD_GEOCODIGO, while in the other three it is called Geographic Unit Code.
+
+When compared, numerous lines from the localsp set did not have correspondence in the three population sets. According to the results presented in Script 04, we found through the dim (_) function that the population dataframes are formed by 645 lines, while in Script 11 we identified that localsp is formed by 2.142 lines. This significant difference between the dataframes safeguards, in summary, the territorial division structured by the Brazilian Institute. 
+
+As we found in the documentation of the 2010 Demographic Census (IBGE, 2013a), the sample points that integrate the localsp data are more numerous because they detail the territorial network in a more robust way, that is, they divide the territorial portions even more, reaching the level of age session. On the other hand, populacao01, populacao02 and populacao03 are the agglomeration of data from census tracts belonging to the same municipality. However, we emphasize that, despite the combination of census tracts within the municipality attribute, there is in Scripts 01, 02 and 03 a demonstration of the fragmentation of the distribution of municipal populations in urban and rural areas, which interests us for the construction of the decision tree.
+
+Therefore, to guide the further merging of spatial information (LONG, LAT and ALT) from localsp with the three population dataframes, we used as a reference (direction) the codes present in populacao01, populacao02 and populacao03 and joined those contained in localsp. This was done by the join (_) function, which allows the insertion of information from one dataframe into another, using an attribute as a guide for its insertion.
+
+For such, it was necessary to rename the Geographical Unit Code attribute of the three population sets to CD_GEOCODIGO, which was done using the rename (_) function. We performed this operation so that the join (_) function would directly find the key attribute among the data sets, thus allowing the insertion of localsp spatial data in the three population sets. 
+
+These nomenclatural changes are not presented in the body of the text but are found in the R code available in the GitHub repository of this work. About the join (_) function, we also present the results in the repository code, considering the number of lines that make up the object.
+
+Having said that, we return to the localsp object for the analysis of the spatialization of the data, which we previously referred to. As the attributes latitude (LAT), longitude (LONG) and altitude (ALT) are essential for data plotting, we used an internal column filter in the plot (_) function, which was done by using of square brackets [] in the sequence of the function, as the code on Figure 02 illustrates. The three pieces of information now dealt with were in columns 18, 19 and 20 of the dataframe, as we identified earlier in the names (_) function of the Script 11. Therefore, we use only the three columns to plot the localsp object, as shown in Figure 02 below:
+
+Figure 02: Plotting the longitude, latitude, and altitude columns of the localsp set.
 
 ```{r}
 plot(localsp[18:20])
@@ -328,12 +349,11 @@ plot(localsp[18:20])
 dev.off
 ```
 
-Como havíamos observado, o dataframe de localsp integra um conjunto de informações para delimitação de pontos distribuídos no território, em concordância àquilo que foi apresentado na Figura 3.
-Deste modo, ao cruzar as informações dos atributos long, lat e alt, observamos que a plotagem dos dados foi realizada seguindo a mesma lógica pontual da estrutura do dataframe localsp.
-Ao atentarmos para a plotagem feita na primeira coluna e segunda linha da Figura 4, observamos que o cruzamento entre os atributos longitude e latitude retrata uma distribuição de pontos na plotagem que se assemelha à estrutura poligonal do Estado de São Paulo.
-Entretanto, isto não foi suficiente para confirmarmos a distribuição dos dados no espaço geográfico do território paulista.
-Utilizando a função cbind.data.frame (*), individualizou-se as duas colunas do objeto localsp que referem-se a latitude (LAT) e longitude (LONG) para criar um novo conjunto de informações espaciais, cujo nome estabelecido foi pointsp. Este conjunto é composto por 2.142 linhas e duas colunas e está estruturado no formato de dataframe, como indicaram as funções dim (*) e class (\_), respectivamente.
-A plotagem dos dados de pointsp, mostra que há uma distribuição gráfica das informações espaciais do Estado de São Paulo, porém há uma deformação (achatamento) na estrutura poligonal do território paulista, como ilustra a Figura 5 a seguir.
+Source: the authors (2023). Caption: figure produced through the plot (_) function, using the longitude, latitude and altitude columns of the localsp dataset. In the figure there is a crossing of the information in the columns, using oriented pairs: altitude x latitude, altitude x longitude, longitude, and latitude; and the conjunction of the three attributes. Outline in red representing the territorial polygon of the State of São Paulo, inserted to demonstrate the distribution of points.
+
+As we had observed, the localsp dataframe integrates a set of information for delimitation of points distributed in the territory, in agreement with what was presented in Figure 02. Thus, when crossing the information of the LONG, LAT and ALT attributes, we observe that the plot of the data was carried out following the same punctual logic of the structure of the localsp dataframe.
+
+When we pay attention to the plot made in the first column and second line of Figure 02, we observe that the intersection between the longitude and latitude attributes portrays a distribution of points in the plot that resembles the polygonal structure of the State of São Paulo. However, this was not enough to confirm the distribution of data in the geographic space of São Paulo.
 
 ```{r include=FALSE}
 cbind.data.frame(localsp$latitude, localsp$longitude)
@@ -341,6 +361,11 @@ pointsp = cbind.data.frame(localsp$latitude, localsp$longitude)
 dim(pointsp)
 class(pointsp)
 ```
+
+Using the cbind.data.frame (_) function, the two columns of the localsp object that refer to latitude (LAT) and longitude (LONG) were individualized to create a new set of spatial information, whose established name was pointsp. This set consists of 2.142 lines and two columns and is structured in dataframe format, as indicated by the dim (_) and class (_) functions, respectively.
+The plotting of pointsp data shows that there is a graphic distribution of spatial information for the State of São Paulo, but there is a deformation (flattening) in the polygonal structure of the territory of São Paulo, as illustrated in Figure 03 below.
+
+Figure 03: Plotting the data from pointsp
 
 ```{r}
 plot(pointsp)
@@ -353,13 +378,17 @@ plot(pointsp)
 dev.off
 ```
 
-Lovelace et al. (2019) e Anderson (2021) apresentam que para transformar um dataframe em um sistema de localização espacial de pares ordenados deve-se utilizar a função sfheaders::sfg\_.
-Através dela é possível direcionar a criação de pontos, matrizes ou dataframes.
-Como destacamos precedentemente, objeto pointsp foi estruturado no formato de dataframe; portanto utilizamos a estrutura de multipontos (do inglês, multipoint) para leitura e conversão do objeto em pares ordenados.
-Com isso, criamos um objeto, o qual recebeu o nome de multipointsp_sfg.
-Ao analisarmos multipoints_sfg verificamos que ele se constituía de pares ordenados XY, apresentando dois valores entre as vírgulas que correspondem ao par para caracterização e, consequentemente, para plotagem de cada um dos pontos que integravam o conjunto de dados.
-Por meio da função class (*) verificamos que a construção dos pares ordenados foi feita conforme indicado, seguindo a lógica de múltiplos pontos e com geometria de recursos simples (sfg, do inglês, simple feature geometries). De modo a analisar os mesmos dados de pointsp em uma estrutura poligonal, realizamos o mesmo procedimento acima, entretanto fazendo a substituição de multipoint na função sfg* por polygon (do inglês, polígonos), o que permitiu a criação do conjunto polygonsp_sfg.
-Empregando novamente a função class (*), verificamos que o conjunto polygonsp_sfg também foi criado com base em pares ordenados XY, seguindo a estrutura de polígonos e integrando uma geometria de recursos simples (sfg). Intuindo comparar as estruturas de multipointsp_sfg e de polygonsp_sfg, realizamos a plotagem destes conjuntos por meio da função plot (*), como ilustra a Figura 6.
+Source: the authors (2023). Caption: figure produced through the function plot (_), using the data set pointsp.
+
+Lovelace et al. (2019) and Anderson (2021) show that to transform a dataframe into a spatial location system of ordered pairs, the sfheaders::sfg_ function must be used. Through it, it is possible to direct the creation of points, matrices or dataframes. As we highlighted earlier, the pointsp object was structured in the dataframe format; therefore, we use the multipoint structure to read and convert the object into ordered pairs. With that, we created an object, which was named multipointsp_sfg.
+
+When analyzing multipoints_sfg, we verified that it consisted of ordered XY pairs, presenting two values between the commas that correspond to the pair for characterization and, consequently, for plotting each of the points that integrated the data set. Using the class (_) function, we verify that the construction of the ordered pairs was done as indicated, following the logic of multiple points and with simple feature geometries (sfg).
+
+To analyze the same pointsp data in a polygonal structure, we performed the same procedure as above, however replacing multipoint in the sfg_ function by polygon, which allowed the creation of the set polygonsp_sfg. Employing the class (_) function again, we verify that the polygonsp_sfg set was also created based on ordered XY pairs, following the polygon structure and integrating a simple feature geometry (sfg).
+
+Intuiting to compare the structures of multipointsp_sfg and polygonsp_sfg, we plotted these sets using the plot (_) function, as shown in Figure 04.
+
+Figure 04: Plotting multipointsp_sfg and polygonsp_sfg data
 
 ```{r}
 multipointsp_sfg = sfheaders::sfg_multipoint(obj = pointsp)
@@ -392,6 +421,8 @@ plot(multipointsp_sfg)
 plot(polygonsp_sfg)
 ```
 
+Source: the authors (2023). Caption: figure produced through the plot (_) function, using the multipointsp_sfg and polygonsp_sfg data sets. Outline in red representing the territorial polygon of the State of São Paulo, inserted to demonstrate the distribution of points.
+
 ```{r}
 #exportando a figura para o diretório de trabalho
 png("C:/ARQUIVOS COMPUTADOR/DOUTORADO/DOUTORADO TESE/03 DADOS GEOESPACIAIS/02 DENSIDADE DEMOGRÁFICA/figura06.png", res = 300, width = 2400, height = 1700)
@@ -401,15 +432,11 @@ plot(polygonsp_sfg)
 dev.off
 ```
 
-Notamos que o conjunto multipointsp_sfg distribui de forma clara cada um dos pontos provenientes de localsp.
-Em contrapartida, em polygonsp_sfg evidenciamos que há uma conexão entre os pontos do conjunto de referências geográficas, o que prejudica a individualização das informações geográficas de localsp.
-Entretanto, verificamos que em ambos há uma forma similar de distribuição dos dados na plotagem produzida.
-Moreno & Basille (2021) apresentam que através da função sf_use_s2() é possível integrar um objeto do tipo sf, como o objeto multipointsp_sfg, à uma estrutura esférica da projeção planetária.
-Segundo estes autores, esta estrutura esférica de s2 é fundamentada na base do Google Earth® e permite a plotagem de pares ordenados XY de pontos sobre este padrão de visualização.
-Assumindo isto, empregamos a função st_buffer (\_) para ler o conjunto de dados multipointsp_sfg e estruturar um conjunto de dados que recebeu o nome de sppontos_s2.
-Concomitantemente, utilizamos a função sf_use_s2 para indicar que o objeto deveria ser lido neste contexto esférico para plotagem.
-Após a criação do objeto sppontos_s2, realizamos nova plotagem para analisar comparativamente o novo modelo de plotagem e aqueles referentes aos conjuntos multipointsp_sfg e polygonsp_sfg.
-Na Figura são reportadas as três plotagens.
+We note that the multipointsp_sfg set clearly distributes each of the points coming from localsp. In contrast, in polygonsp_sfg we evidenced that there is a connection between the points of the set of geographic references, which impairs the individualization of the geographic information of localsp. However, we verified that in both is a similar form of data distribution in the produced plot.
+Moreno & Basille (2021) show that through the sf_use_s2 (_) function it is possible to integrate an object of type sf, such as the multipointsp_sfg object, to a spherical structure of the planetary projection. According to these authors, this s2 spherical structure is based on Google Earth and allows the plotting of XY ordered pairs of points on this visualization pattern.
+Assuming this, we use the st_buffer (_) function to read the multipointsp_sfg data set and structure a data set that received the name of sppoints_s2. Concomitantly, we used the sf_use_s2 function to indicate that the object should be read in this spherical context for plotting. After creating the sppontos_s2 object, we perform a new plot to comparatively analyze the new plot model and those referring to the multipointsp_sfg and polygonsp_sfg sets. The three plots are reported in the Figure 05. 
+
+Figure 05: Comparative analysis of plotting data sets.
 
 ```{r}
 sppontos_s2 = st_buffer(multipointsp_sfg, 1)
@@ -423,6 +450,8 @@ plot(polygonsp_sfg)
 plot(sppontos_s2)
 ```
 
+Source: the authors (2023). Caption: comparative figure between the types of objects, produced through the function plot (_), using the sets multipoints_sfg, polygonsp_sfg and sppontos_s2. Outline in red representing the territorial polygon of the State of São Paulo, inserted to demonstrate the distribution of points. Outline in red representing the territorial polygon of the State of São Paulo, inserted to demonstrate the distribution of points.
+
 ```{r}
 #exportando a figura para o diretório de trabalho
 png("C:/ARQUIVOS COMPUTADOR/DOUTORADO/DOUTORADO TESE/03 DADOS GEOESPACIAIS/02 DENSIDADE DEMOGRÁFICA/figura07.png", res = 300, width = 2400, height = 1700)
@@ -433,8 +462,7 @@ plot(sppontos_s2)
 dev.off
 ```
 
-Diante da Figura 7, notamos que a terceira estrutura, criada a partir de sf_use_s2, gera uma estrutura espacial com os pontos descritos na estrutura do conjunto sppontos_s2.
-Para compreendermos melhor a estrutura dos três modelos, empregamos a função ncell (\_) para identificar o número de células presentes em cada um dos três dataframes.
+In front of Figure 05, we note that the third structure, created from sf_use_s2, generates a spatial structure with the points described in the structure of the set sppontos_s2. To better understand the structure of the three models, we use the ncell (_) function to identify the number of cells present in each of the three dataframes.
 
 ```{r}
 ncell(multipointsp_sfg)
@@ -454,18 +482,18 @@ crs(localsp)
 crs(localidades_br)
 ```
 
-Os resultados obtidos por esta função revelaram que polygonsp_sfg e sppontos_s2 representam um único pixel (célula) na plotagem, ou seja, os dados que integram os dois dataframes formam um único objeto espacial.
-Em contrapartida, multipointsp_sfg é estruturado por 4.284 pontos distribuídos na plotagem, o que permite a fragmentação dos dados para melhor espacializar a informação censitária no Estado.
-Portanto, seja polygonsp_sfg, seja sppontos_s2 foram desconsiderados nas análises subsequentes.
-Em faces destes resultados sobre o particionamento da informação espacialmente e objetivando assimilar outros atributos espaciais importantes, expandimos a seleção de atributos que integrava o conjunto multipointsp_sfg.
-Para tanto, retomamos o conjunto pointsp e selecionamos outros dois atributos, sendo eles: NM_MUNICIPIO e NM_LOCALIDADE.
-Conjuntamente à seleção, criamos um conjunto de dados, que recebeu o nome de localsp Neste, modificamos, por meio da função rename (*), os nomes destes atributos para município e localidade, respectivamente. Analisando localsp, constatamos que para um mesmo município (NM_MUNICIPIO) existem diferentes localidades (NM_LOCALIDADE), ou seja, existem subdivisões que demarcam pontos estratégicos para as análises censitárias realizadas pelo IBGE. De acordo com a documentação técnica do instituto brasileiro (IBGE, 2013a), as diferentes localidades são setores censitários associados às sedes municipais, mas que integram perfis diferentes, podendo enquadrar-se como distritos, aglomerados populacionais, vilas, entre outros. Por meio da função dim (*) identificamos que, assim como multipoints_sfg, localsp é constituído por 2.142 linhas, porém possui duas colunas a mais que o conjunto anterior, pois, inserimos os dois novos atributos na seleção supramencionada.
-Ao empregarmos a função crs (*), para examinar se este dois dataframes possuíam sistema de coordenadas geográficas associados à sua estrutura, detectamos que nenhum deles possuía. Diante disso, aplicamos a mesma função no conjunto percursos dos dados, localidades_br, e constatamos que este estava estruturado no Sistema de Referência Geocêntrico para as Américas (SIRGAS 2000) e descritos no formato WKT (sigla do inglês, Well-Know Text). Com base nestas constatações, retomamos a obra de Lovelace et al. (2019) e verificamos que através da função dplyr::select (*) é possível selecionar colunas dentro de dataframes que são de interesse para a espacialização da informação geográfica, intuindo estruturar um sistema de referenciamento geográfico para os dados.
-Nesta perspectiva, utilizamos o dataframe localsp e filtramos as informações de latitude e longitude deste conjunto para criar outro objeto, cujo nome dado foi geometriasp.
-Utilizando os dados de geometriasp, realizamos a junção das duas colunas para estruturar 3 novos conjuntos de dados orientados espacialmente.
-Para tal, empregamos a função sfheaders::sfg, objetivando ler o conjunto de dados de geometriasp e formar um conjunto de dados no formato de lista (linestring), outro no formato de polígono (polygon) e outro no formato de pontos múltiplos (multipoint).
-Para cada um destes formatos, criamos uma lista de valores, os quais receberam os respectivos nomes: listacoord_sfg, poligoncoord_sfg e pontoscoord_sfg.
-Após a criação dos três conjuntos de valores supracitados, plotamos os dados para visualizar a distribuição espacial associada aos conjuntos, como ilustra a Figura 8.
+The results obtained by this function revealed that polygonsp_sfg and sppontos_s2 represent a single pixel (cell) in the plot, that is, the data that integrate the two dataframes form a single spatial object. On the other hand, multipointsp_sfg is structured by 4.284 points distributed in the plot, which allows data fragmentation to better spatialize census information in the State. Therefore, both polygonsp_sfg and sppontos_s2 were disregarded in subsequent analyses.
+
+In view of these results on spatially partitioning of information and aiming to assimilate other important spatial attributes, we expanded the selection of attributes that were part of the multipointsp_sfg set. To do so, we resume the pointsp set and select two other attributes, namely: NM_MUNICIPAL and NM_LOCALIDADE. Together with the selection, we created a data set, which was named localidadessp. In this, we modify, through the rename (_) function, the names of these attributes for municipality and locality, respectively.
+
+Analyzing localidadessp, we found that for the same municipality (NM_MUNICIPALITY) there are different localities (NM_LOCALIDADE), that is, there are subdivisions that demarcate strategic points for the census analyzes carried out by the IBGE. According to the technical documentation of the Brazilian institute (IBGE, 2013a), the different locations are census sectors associated with municipal headquarters, but which integrate different profiles, and can be classified as districts, population centers, villages, among others.
+
+Using the dim (_) function, we identified that, like multipoints_sfg, localidadessp is made up of 2.142 lines, but it has two more columns than the previous set, since we inserted the two new attributes in the selection. When we used the crs (_) function to examine whether these two dataframes had a geographic coordinate system associated with their structure, we detected that none of them did. Therefore, we applied the same function to the set of data paths, localidades_br, and found that this was structured in the Geocentric Reference System for the Americas (SIRGAS 2000) and described in WKT format (acronym for Well-Know Text). 
+
+Based on these findings, we return to the work by Lovelace et al. (2019) and we verified that through the dplyr::select (_) function it is possible to select columns within dataframes that are of interest for the spatialization of geographic information, intuiting to structure a geographic referencing system for the data. In this perspective, we use the localidadessp dataframe and filter the latitude and longitude information from this set to create another object, whose given name was geometriasp.
+
+Using the geometriasp data, we join the two columns to structure 3 new spatially oriented datasets. To do so, we use the sfheaders::sfg function, with the aim of reading the geometriasp data set and forming a list format (linestring), another in polygon format and another in multiple point format (multipoint). For each of these formats, we created a list of values, which received the respective names: listacoord_sfg, poligoncoord_sfg and pontocoord_sfg. After creating the three sets of values mentioned above, we plotted the data to visualize the spatial distribution associated with the sets, as illustrated in Figure 06.
+
 
 ```{r}
 geometriasp = localsp[18:19]
@@ -484,12 +512,16 @@ poligoncoord_sfg
 pontoscoord_sfg
 ```
 
+Figure 06: Comparative plot of datasets in sfg format.
+
 ```{r}
 par(mfrow=c(1,3))
 plot(listacoord_sfg)
 plot(poligoncoord_sfg)
 plot(pontoscoord_sfg)
 ```
+
+Source: the authors (2023). Caption: comparative figure between sfg datasets, produced using the plot (_) function and based on dataframes listacoord_sfg, poligoncoord_sfg and pontocoord_sfg. Outline in red representing the territorial polygon of the State of São Paulo, inserted to demonstrate the distribution of points.
 
 ```{r}
 #exportando a figura para o diretório de trabalho
@@ -501,20 +533,13 @@ plot(pontoscoord_sfg)
 dev.off
 ```
 
-A plotagem dos conjuntos listacoord_sfg e poligoncoord_sfg mostrou que ambos orientavam uma plotagem que unia os dados, criando um desenho contínuo com os valores de cada um dos pontos.
-Por outro lado, pontoscoord_sfg representou cada um dos pares ordenados de XY (longitude e latitude) distribuídos descontinuamente na plotagem dos dados, ou seja, na representação gráfica deste conjunto foi possível individualizar os pontos distribuídos no território que são orientados pelo dataframe.
-Mesmo que divergentes entre si, visualizamos que os três conjuntos estruturaram um padrão de plotagem que se assemelha ao contorno territorial do Estado de São Paulo.
-Após a análise da distribuição das informações geográficas de latitude e longitude dos conjuntos acima tratados, os quais eram provenientes de geometrias, revisitamos o arquivo de base localsp.xls para ampliar o conjunto de dados analisados.
-Portanto, retornamos ao Excel 365 para filtrar novamente os dados fornecidos pelo IBGE.
-O arquivo referido foi duplicado e o novo recebeu o nome localsp02.xls.
-Neste arquivo, aplicamos os filtros de colunas para selecionar outros atributos de interesse.
-No atributo (variante) "NM_CATEGORIA" filtramos somente os dados que se referiam às "CIDADE", excluindo as demais tipologias territoriais para este atributo.
-Do 2.142 dados que integravam o arquivo completo, restaram apenas 636 resultados.
-Estes 636 resultados estavam subdivididos entre urbano e rural, segundo as informações constantes no atributo "TIPO" do arquivo localsp02.xls.
-Utilizando a função read_excel (*), carregamos o arquivo localsp02.xls no R® e criamos o objeto localsp02 com os dados acima referidos. Seguidamente à criação do conjunto, empregando a função rename (*), renomeamos os títulos das colunas (nome dos atributos) NM_MUNICIPIO, NM_UF, LONG, LAT e ALT, as quais receberam os nomes município, estado, longitude, latitude e altitude, respectivamente.
-A alteração dos nomes das colunas foi feita com o objetivo de criar pontos para a ulterior junção do conjunto de dados localsp02 e os conjuntos referentes às populações (populacao01, populacao02 e populacao03).
-Com os dados carregados de localsp02, filtramos três atributos de interesse: municipio, latitude e longitude e aplicamos a função cbind.data.frame (\_) para criar um conjunto de dados, que recebeu o nome de matrixlocalsp02.
-A plotagem destes dados é representada na Figura 9 a seguir.
+The plotting of the sets listacoord_sfg and poligoncoord_sfg showed that both oriented a plot that united the data, creating a continuous drawing with the values of each of the points. On the other hand, pointscoord_sfg represented each of the ordered pairs of XY (longitude and latitude) discontinuously distributed in the data plot, that is, in the graphic representation of this set it was possible to individualize the points distributed in the territory that are oriented by the dataframe. Even though they differ from each other, we see that the three sets structured a plot pattern that resembles the territorial contour of the State of São Paulo. 
+
+After analyzing the distribution of latitude and longitude geographic information of the sets discussed above, which came from geometries, we revisited the localsp.xls base file to expand the analyzed data set. Therefore, we returned to Excel 365 to filter the data provided by IBGE again. The referred file was duplicated and the new one was named localsp02.xls. In this file, we apply column filters to select other attributes of interest. In the attribute (variant) NM_CATEGORIA we filtered only the data that referred to the CIDADE (of portuguese, city), excluding the other territorial typologies for this attribute. Of the 2.142 data that made up the complete file, only 636 results remained. These 636 results were subdivided into urban and rural, according to the information contained in the TIPO (of Portuguese, type) attribute of the localsp02.xls file.
+
+Using the read_excel (_) function, we load the localsp02.xls file in R and create the localsp02 object with the data. Following the creation of the set, using the rename (_) function, we rename the column titles (attribute names) NM_MUNICIPIO, NM_UF, LONG, LAT and ALT, which received the names municipality, state, longitude, latitude and altitude, respectively. The column names were changed with the aim of creating points for the further joining of the localsp02 dataset and the sets referring to populations (populacao01, populacao02 and populacao03).
+
+With the data loaded from localsp02, we filtered three attributes of interest: city, latitude and longitude and applied the cbind.data.frame (_) function to create a data set, which was named matrixlocalsp02. The plot of these data is represented in Figure 07 below. 
 
 ```{r}
 localsp02 <- read_excel("C:/ARQUIVOS COMPUTADOR/DOUTORADO/DOUTORADO TESE/03 DADOS GEOESPACIAIS/02 DENSIDADE DEMOGRÁFICA/localsp02.xls")
@@ -537,9 +562,13 @@ names(matrixlocalsp02)[names(matrixlocalsp02) == "localsp02$longitude"] = "longi
 matrixlocalsp02
 ```
 
+Figure 07: Plotting data from matrixlocalsp02
+
 ```{r}
 plot(matrixlocalsp02)
 ```
+
+Source: the authors (2023). Caption: figure produced through the plot (_) function, using the matrixlocalsp02 dataset. Outline in red representing the territorial polygon of the State of São Paulo, inserted to demonstrate the distribution of points.
 
 ```{r}
 #exportando a figura para o diretório de trabalho
@@ -548,30 +577,26 @@ plot(matrixlocalsp02)
 dev.off
 ```
 
-Observamos que o cruzamento das informações de latitude e longitude, representados na segunda linha e terceira coluna, forneceram uma representação espacial próxima àquela encontrada na estrutura poligonal do Estado de São Paulo, o que reafirmou a organização dos dados para plotagem dos dados.
-Realizada esta operação para atestar a distribuição dos dados na plotagem, utilizamos a função unite (*) para unir as colunas latitude e longitude. Por meio dela estruturamos uma coluna única, cujo nome dado ao atributo foi geom, tendo em vista o caráter de geoposicionamento dos dados presentes nela. Na função aplicamos o separador (sep) vazio entre as aspas ("*") para unir as informações latitude longitude e removemos as duas colunas ("remove = TRUE").
-De modo a facilitar nossa análise, criamos um objeto com estes novos dados, o qual recebeu o nome de cidadegeom.
-Este dataframe está organizado em 645 linhas e 2 colunas, onde a primeira coluna representava os nomes dos municípios do Estado de São Paulo e a segunda referia-se ao posicionamento geográfico baseado em latitude e longitude (separadas por pelo espaço vazio acima tratado).
-Após a estruturação de cidadegeom, tentamos unir este conjunto ao conjunto populacao01, empregado as funções: left_join (*), inner_join (*), right_join (*), full_join (*) e anti_join (\_).
-Entretanto, segundo os resultados observados no código R, nenhuma das funções uniu as informações dos dois conjuntos de forma integral, ou seja, houve durante a junção dos dataframes perdas substanciais dos dados referentes a diferentes atributos que os integravam.
-Intuindo otimizar o processamento dos dados no R, bem como nossa análise, optamos por reestruturar o conjunto de dados localsp02.xls no Excel 365.
-Para tanto, duplicamos este arquivo e nomeamos o arquivo duplicado de dados_vetoriais_sp.xls.
-Neste arquivo, inserimos as informações demográficas constantes nos conjuntos populacao01.xls e populacao02.xls.
-Os dados selecionados em cada um dos conjuntos estão descritos a seguir:
+We observed that the intersection of latitude and longitude information, represented in the second line and third column, provided a spatial representation close to that found in the polygonal structure of the State of São Paulo, which reaffirmed the organization of the data for plotting the data.
 
--   Do conjunto populacao01 foram utilizadas as colunas: Área Urbanizada, Área não urbanizada, Área Urbana Isolada, Área Rural (Exceto Aglomerado), Aglomerado Rural de Extensão Urbana, Aglomerado Rural Povoado, Aglomerado Rural Núcleo e Outros Aglomerados Rurais Raros;
+After performing this operation to confirm the distribution of data in the plot, we use the unite (_) function to unite the latitude and longitude columns. Through it, we structured a single column, whose name given to the attribute was geom, in view of the geopositioning character of the data present in it. In the function we apply the empty separator (sep) between the quotes (“_”) to join the latitude and longitude information and remove the two columns (“remove = TRUE”). 
 
--   Do conjunto populacao02 foram utilizadas as colunas: Total, Área total (Km²) e Densidade Demográfica (hab/km²);
+To facilitate our analysis, we created an object with this new data, which was named cidadegeom. This dataframe is organized in 645 lines and 2 columns, where the first column represented the names of the municipalities in the State of São Paulo and the second referred to the geographic positioning based on latitude and longitude (separated by the empty space treated above).
 
-    Posteriormente à inserção das colunas dos dois conjuntos acima no conjunto dados_vetoriais_sp.xls, este arquivos de dados foi carregado no R® por meio da função read_excel (*). Com este arquivo, criamos o objeto vetor_sp, o qual estava estruturado no formato de dataframe (tabela) e possuía 645 linhas de dados e 32 colunas de atributos. Estas inferências foram confirmadas pelas funções class (*) e dim (*). Conjuntamente, aplicamos as funções names (*), para verificar o nome de cada um dos atributos associados a vetor_sp, e summary (*), para analisar a composição dos dados do conjunto.\
-    Através da função names (*) identificamos que os 32 atributos do conjunto de dados vetor_sp não sofreram alterações após o carregamento no software, mantendo os menos nomes utilizados no arquivo dados_vetoriais_sp.xls.
-    Constatamos ainda que estes dividem-se entre características populacionais, como População Total e Area Total (km²), informações de posicionamento geográfico das características populacionais, como longitude, latitude e altitude) e atributos estabelecidos para classificação no sistema do IBGE, como GM_PONTO_sk.
-    Complementarmente, a função summary (\_) forneceu a síntese sobre os atributos que compõem o conjunto vetor_sp.
-    Observamos nos resultados que alguns dos atributos foram reportados como caracteres, ou seja, as informações constantes nas linhas destas colunas representavam atributos nominas, como município, microrregião e mesorregião.
-    Por outro lado, outras colunas possuíam atributos numéricos a elas associadas e foram reportadas as sínteses estatísticas nos resultados apresentados pela função, como verificamos em longitude, latitude e altitude.
-    Utilizando dois dos atributos numéricos de vetor_sp, sendo eles longitude (coluna 29) e latitude (coluna 30), realizamos a plotagem destas informações, intuindo confirmar possibilidade de espacialização dos dados do conjunto.
-    Como mostramos anteriormente para outras plotagens, estes dois atributos de vetor_sp foram selecionados através do uso de colchetes [], onde indicamos as colunas a serem utilizadas para plotagem.
-    A Figura retrata a plotagem destes dados para confirmação da possibilidade de espacialização dos dados na representação gráfica.
+After structuring the cidadegeom, we try to join this set to the set populacao01, using the functions: left_join (_), inner_join (_), right_join (_), full_join (_) and anti_join (_). However, according to the results observed in the R code, none of the functions joined the information of the two sets in an integral way, that is, there was substantial loss of data during the joining of the dataframes referring to the different attributes that integrated them. 
+
+Intuiting to optimize data processing in R, as well as our analysis, we chose to restructure the localsp02.xls dataset in Excel 365. To do so, we duplicated this file and named the duplicated file dados_vetoriais_sp.xls. In this file, we insert the demographic information contained in the populacao01.xls and populacao02.xls sets. The data selected in each of the sets are described below.:
+
+•	From the set populacao01, the following columns were used: Urbanized Area, Non-urbanized Area, Isolated Urban Area, Rural Area (except Agglomerate), Rural Agglomerate with Urban Extension, Rural Agglomerate Populated, Core Rural Agglomerate and Other Rare Rural Agglomerates.
+•	From the set populacao02, the columns were used: Total, Total area (Km²) and Demographic Density (inhabitant/km²).
+
+After inserting the columns of the two sets above in the dados_vetoriais_sp.xls set, this data file was loaded into R using the read_excel (_). With this file, we created the vetor_sp object, which was structured in the dataframe format (table) and had 645 lines of data and 32 columns of attributes. These inferences were confirmed by the functions class (_) and dim (_). Together, we apply the functions names (_), to verify the name of each of the attributes associated with vetor_sp, and summary (_), to analyze the composition of the set data.  
+
+Through the names (_) function, we identified that the 32 attributes of the vetor_sp data set did not change after being loaded into the software, keeping the least used names in the dados_vetoriais_sp.xls file. We also found that these are divided between population characteristics, such as Total Population and Total Area (km²), geographic positioning information of population characteristics, such as longitude, latitude and altitude and attributes established for classification in the IBGE system, such as GM_PONTO_sk. 
+
+In addition, the summary (_) function provided a summary of the attributes that make up the vetor_sp set. We observed in the results that some of the attributes were reported as characters, that is, the information contained in the lines of these columns represented nominal attributes, such as municipality, microregion and mesoregion. Other columns had numerical attributes associated with them and statistical summaries were reported in the results presented by the function, as we verified in longitude, latitude and altitude. 
+
+Using two of the numeric attributes of vetor_sp, namely longitude (column 29) and latitude (column 30), we plotted this information, intuiting to confirm the possibility of spatialization of the set data. As we showed earlier for other plots, these two attributes of vetor_sp were selected using square brackets [], where we indicate the columns to be used for plotting. The Figure 08 depicts the plotting of these data to confirm the possibility of data spatialization in the graphical representation. 
 
 ```{r}
 cidadegeom = matrixlocalsp02 %>% unite("geom", latitude:longitude, sep = " ", remove = TRUE)
@@ -600,9 +625,13 @@ dim(vetor_sp)
 summary(vetor_sp)
 ```
 
+Figure 08: Plotting the data associated with the latitude and longitude attributes of vetor_sp.
+
 ```{r}
 plot(vetor_sp[29:30])
 ```
+
+Source: the authors (2023). Caption: figure produced through the plot (_) function, using the data associated with the longitude and latitude attributes that are part of the vetor_sp data set. Outline in red representing the territorial polygon of the State of São Paulo, inserted to demonstrate the distribution of points.
 
 ```{r}
 #exportando a figura para o diretório de trabalho
@@ -611,20 +640,15 @@ plot(vetor_sp[29:30])
 dev.off
 ```
 
-Com base na plotagem dos dados de vetor_sp (Figura 10), notamos que espacialização dos dados associados aos longitude e latitude seguiu um formato que se assemelha à estrutura poligonal do Estado de São Paulo.
-Isso favoreceu a confirmação de que este conjunto de dados possuía uma estrutura geoespacial que favorecia seu emprego como referência para a plotagem dos dados demográficos no território paulista.
-Utilizando os dados de vetor_sp, realizamos a junção das duas colunas (longitude e latitude) para estabelecer 3 conjuntos de dados orientados espacialmente.
-Novamente, empregamos a função sfheaders::sfg com o objetivo de ler o objeto e estruturar três novos conjuntos de dados: um no formato de lista (linestring), outro no formato de polígono (polygon) e outro no formato de pontos múltiplos (multipoint).
-Para cada um dos formatos, foram criadas listas de pares ordenados XY, os quais receberam os respectivos nomes: listacoord_sfg, poligoncoord_sfg e pontoscoord_sfg.
-Subsequente à criação dos três conjuntos, tentamos plotar os dados que os integravam para analisar a espacialização da informações geográfica.
-Entretanto a tarefa não foi completada pelo software, o qual acusou um erro na estrutura do conjunto de dados.
-Segundo o alerta feito, evidenciamos que os três conjuntos foram interpretados como uma única camada, não permitindo a espacialização da informação e, consequentemente, a plotagem dos dados.
-Em contrapartida, objetivando criar objetos do tipo coleção de dados simples (simple feature collection), empregamos a função sfheader::sf\_ nos três conjuntos de dados apenas tratados.
-Por meio da estrutura da função, indicamos a criação de outros três conjuntos a partir deles, sendo eles: listacoord_sp_sf no formato de lista (linestring), baseado em listacoord_sfg; poligoncoord_sp_sf no formato de polígono (polygon), proveniente de poligoncoord_sfg; e pontoscoord_sp_sf no formato de pontos múltiplos (multipoint), derivado de pontoscoord_sfg.
-Conjuntamente, aplicamos a função st_crs (\_) em cada um dos três novos conjuntos para indicar qual é o sistema de georreferenciamento a ser utilizado por eles, optando por "SIRGAS 2000", sendo este o mesmo empregado pelo IBGE.\
-De acordo com os resultados reportados pelo software, os formatos lista e multipontos foram criados com sucesso.
-Em compensação, o conjunto de base poligonal, poligoncoord_sp_sf, não pôde ser criado, sugerindo, nos resultados, um erro devido às dimensões no conjunto de dados.
-Com isto em vista, realizamos a plotagem dos conjuntos listacoord_sp_sf e pontoscoord_sp_sf, de modo a identificar se houve a distribuição dos pontos na plotagem conforme esperávamos (Figura 11).
+CBased on the vetor_sp data plot (Figure 08), we noticed that the spatialization of data associated with longitude and latitude followed a format that resembles the polygonal structure of the State of São Paulo. This favored the confirmation that this dataset had a geospatial structure that favored its use as a reference for plotting demographic data in the territory of São Paulo. 
+
+Using the vetor_sp data, we join the two columns (longitude and latitude) to establish 3 spatially oriented data sets. Again, we use the sfheaders::sfg function to read the object and structure three new sets of data: one in list format (linestring), another in polygon format (polygon) and another in multiple point format (multipoint ). For each of the formats, lists of ordered XY pairs were created, which received the respective names: listacoord_sfg, poligoncoord_sfg and pontocoord_sfg.
+
+Subsequent to the creation of the three sets, we tried to plot the data that integrated them to analyze the spatialization of the geographic information. However, the task was not completed by the software, which accused an error in the structure of the data set. According to the alert made, we evidenced that the three sets were interpreted as a single layer, not allowing the spatialization of the information and, consequently, the plotting of the data. 
+
+Still, to create simple feature collection objects, we used the sfheader::sf_ function on the three datasets just treated. Through the structure of the function, we indicate the creation of three other sets from them, namely: listacoord_sp_sf in list format (linestring), based on listacoord_sfg; poligoncoord_sp_sf in polygon format (polygon), coming from poligoncoord_sfg; and pontoscoord_sp_sf in multipoint format (multipoint), derived from pontoscoord_sfg. Together, we apply the st_crs (_) function to each of the three new sets to indicate which is the georeferencing system to be used by them, opting for “SIRGAS 2000”, which is the same used by the IBGE.  
+
+According to the results reported by the software, the list and multipoint formats were successfully created. However, the polygonal base set, poligoncoord_sp_sf, could not be created, suggesting, in the results, an error due to the dimensions in the dataset. With this in mind, we plotted the sets listacoord_sp_sf and pontoscoord_sp_sf, to identify whether there was a distribution of points in the plot as expected (Figure 09).
 
 ```{r}
 listacoord_saopaulo = sfheaders::sfg_linestring(obj = vetor_sp, x = "Longitude", y = "Latitude", z = "Altitude")
@@ -641,14 +665,13 @@ pontoscoord_saopaulo = sfheaders::sfg_multipoint(obj = vetor_sp, x = "Longitude"
 pontoscoord_saopaulo
 ```
 
-Tentou-se plotar os dados criados anteriormente, entretanto a tarefa não foi completada devido a um erro.
-
 ```{r eval=FALSE, include=FALSE}
 par(mfrow=c(1,3))
 plot(listacoord_saopaulo)
 plot(poligoncoord_saopaulo)
 plot(pontoscoord_saopaulo)
 ```
+
 
 ```{r}
 listacoord_sp_sf = sfheaders::sf_linestring(obj = listacoord_saopaulo)
@@ -668,11 +691,15 @@ st_crs(pontoscoord_sp_sf) = "SIRGAS 2000"
 pontoscoord_sp_sf
 ```
 
+Figure 09: Plotting data listacoord_sp_sf and pontoscoord_sp_sf
+
 ```{r}
 par(mfrow=c(1,2))
 plot(listacoord_sp_sf)
 plot(pontoscoord_sp_sf)
 ```
+
+Source: the authors (2023). Caption: figure produced through the function plot (_), using data from the sets listacoord_sp_sf and pontoscoord_sp_sf. Outline in red representing the territorial polygon of the State of São Paulo, inserted to demonstrate the distribution of points.
 
 ```{r}
 #exportando a figura para o diretório de trabalho
@@ -698,24 +725,39 @@ crs(pontoscoord_sp_sf)
 ncell(pontoscoord_sp_sf)
 ```
 
-Os resultados obtidos pela plotagem dos dois objetos, listacoord_sp_sf e pontoscoord_sp_sf, assemelham-se ao polígono do Estado de São Paulo.
-Entretanto, nostamos que por se tratar de uma lista, a plotagem de listacoord_sp_sf ocorre de forma contínua, ou seja, cada um dos pontos é conectado, criando um emaranhado entre os pontos georreferenciados.
-Por outro lado, a plotagem do conjunto de dados pontoscoord_sp_sf descreve os pontos distribuídos no território de São Paulo de acordo com as informações geográficas de latitude e longitude (localidade) que integram o objeto.
-Diante disso, realizamos uma investigação para reconhecer as características essenciais atreladas a este conjunto de dados (pontoscoord_sp_sf).
-O objetivo foi confirmar se os dados se mantinham sua propriedade de pares ordenados XY, permitindo sua integração com o conjunto vetor_sp, e se mantinham a sua individualidade para distribuição espacial das informações populacionais na plotagem.
-Os resultados obtidos pela função class (*) apontaram que o conjunto pontoscoord_sp_sf foi estruturado em formato de dataframe, compondo um coleção de dados simples (sf). Ao empregarmos as funções dim (*) e names (*), notamos que este dataframe possuía apenas uma linha e duas colunas, as quais receberam os nomes id e geometry, que eram, respectivamente, a sequência numérica dos pontos XY (longitude e latitude) e a geometria que descrevia cada ponto determinado pelos parênteses na sequência numérica. Complementarmente, por meio da função summary (*) confirmamos a estrutura de pontos múltiplos (multipoint z), todavia, indicando uma única lista em sua composição.
-Por outro lado, a função ext (*) revelou que a extensão espacial deste conjunto de dados estava estruturada, possuindo valor mínimos e máximos de X e Y (xmin, xmax, ymin e ymax). Entretanto, ao aplicarmos a função ncell (*), e considerando os resultados indicados pela função dim (\_), notamos que apenas duas células foram estruturadas neste conjunto de dados, o que implica na estrutura de uma camada única indivisível para tratamento dos dados.
-Conforme observamos na plotagem deste conjunto de dados, a espacialização das informações ocorreu de forma relevante, porém a indivisibilidade dos múltiplos pontos inviabiliza o integração de pontoscoord_sp_sf na estrutura de dados de vetor_sp.
-Portanto, confirmamos que a forma mais adequada para plotagem dos dados, sem que haja perdas significativas ou junções desnecessárias e indivisíveis, é recorrer ao uso do conjunto em sua integralidade, selecionando como base para plotagem as informações geográficas de latitude, longitude e altitude.
-Assim, o conjunto vetor_sp, pelas características descritas ao longo da análise, representou o caminho mais adequado para a correlação de dados, tendo em vista os atributos que o integram, tanto numéricos (quantitativos), quanto nominais (qualitativos).
+The results obtained by plotting the two objects, listacoord_sp_sf and pontoscoord_sp_sf, are similar to the polygon of the State of São Paulo. However, we noticed that because it is a list, the listacoord_sp_sf is plotted continuously, that is, each of the points is connected, creating a tangle between the georeferenced points. In contrast, the plot of the data set pontoscoord_sp_sf describes the points distributed in the territory of São Paulo according to the geographic information of latitude and longitude (locality) that integrate the object.
 
-# Conclusões
+In view of this, we did an investigation to recognize the essential characteristics linked to this data set (pontoscoord_sp_sf). The objective was to confirm whether the data maintained its property of ordered XY pairs, allowing its integration with the vetor_sp set, and whether it maintained its individuality for the spatial distribution of population information in the plot. 
 
-Com base na análise exploratória de dados demográficos, conseguimos identificar os atributos que integram as informações censitárias nacionais.
-Verificamos que os atributos numéricos que integram os conjuntos populacao01, populacao02 e populacao03, disponibilizados pelo Instituto Brasileiro, possuem diferenças estruturais que devem ser corrigidas para que o software possa processar as informações demográficas e espaciais corretamente.
-Averiguamos ainda que as informações longitude e latitude são fundamentais para a plotagem de dados em todos os dataframes que analisamos.
-Através delas, constatamos que a plotagem dos informações censitárias pode ser ordenada dentro do polígono estruturado para o Estado de São Paulo.
-Confirmamos também que o atributo chave "CD_GEOCODIGO" pode ser utilizado para a integração dos dados tabulares disponibilizados na plataforma do IBGE.
-Além disso, conseguimos identificar quais funções mostravam-se fundamentais para manutenção da integridade das informações geográficas, sem perdas estruturais de atributos e/ou junções não partitivas para a plotagem dos dados, mantendo a conformidade dos dados adquiridos diretamente da instituição brasileira.
-Finalmente, reconhecemos as diferentes formas de estruturação de objetos no software R, constatando aquela mais adequada para a correlação de dados vetoriais e raster (shapefile).
+The results obtained by the class (_) function indicated that the set pontoscoord_sp_sf was structured in dataframe format, composing a simple data collection (sf). When using the dim (_) and names (_) functions, we noticed that this dataframe had only one line and two columns, which received the names id and geometry, which were, respectively, the numerical sequence of the XY points (longitude and latitude) and the geometry that described each point determined by the parentheses in the numerical sequence. 
+
+Complementarily, by means of the summary (_) function we confirm the structure of multiple points (multipoint z), however, indicating a single list in its composition. Still, the ext (_) function revealed that the spatial extent of this data set was structured, having minimum and maximum values of X and Y (xmin, xmax, ymin and ymax). However, when we apply the ncell (_) function, and considering the results indicated by the dim (_) function, we notice that only two cells were structured in this dataset, which implies the structure of a single indivisible layer for data processing. 
+
+As we observed in the plot of this data set, the spatialization of information occurred in a relevant way, but the indivisibility of multiple points makes it impossible to integrate pontoscoord_sp_sf in the data structure of vetor_sp. 
+
+Therefore, we confirm that the most appropriate way to plot the data, without significant losses or unnecessary and indivisible joins, is to resort to using the set in its entirety, selecting latitude, longitude, and altitude geographic information as a basis for plotting. Thus, the vetor_sp set, due to the characteristics described throughout the analysis, represented the most appropriate path for data correlation, in view of the attributes that integrate it, both numerical (quantitative) and nominal (qualitative). 
+
+
+# Conclusions
+
+Based on the exploratory analysis of demographic data, we were able to identify the attributes that integrate the national census information. We found that the numerical attributes that make up the sets populacao01, populacao02 and populacao03, made available by the Brazilian Institute, have structural differences that must be corrected so that the software can process demographic and spatial information correctly. We also found that the longitude and latitude information are fundamental for plotting data in all the dataframes we analyzed. Through them, we found that the plotting of census information can be ordered within the structured polygon for the State of São Paulo. We also confirm that the key attribute CD_GEOCODIGO can be used for the integration of tabular data made available on the IBGE platform. In addition, we were able to identify which functions were fundamental for maintaining the integrity of geographic information, without structural loss of attributes and/or non-partitive joins for data plotting, maintaining the compliance of data acquired directly from the Brazilian institution. Finally, we recognize the different ways of structuring objects in the R software, finding the most suitable for the correlation of vector and raster data (shapefile). 
+
+# References
+
+ANDERSON, E. C. Making Maps with R Â: Reproducible Research. GitHub, 2021. Available in: <https://eriqande.github.io/rep-res-web/lectures/making-maps-with-R.html>. 
+
+BIGGS, R. et al. The Routledge Handbook of Research Methods for Social-Ecological Systems. Routledge, London and New York, 526p., 2021. DOI: <https://library.oapen.org/handle/20.500.12657/49560>. 
+
+ELLIS, E. C. Anthromes. In: GOLDSTEIN, M. I. & DELLASALA, D. A. (Ed.). Encyclopedia of the World's Biomes. Oxford: Elsevier, 2020.  p.5-11.  ISBN 978-0-12-816097-8. DOI: <https://doi.org/10.1016/B978-0-12-409548-9.12494-7>. 
+
+ELLIS, E. C.; BEUSEN, A. H. W.; GOLDEWIJK, K. K. Anthropogenic Biomes: 10,000 BCE to 2015 CE. Land, v. 9, n. 5, 2020. DOI: <https://doi.org/10.3390/land9050129>. 
+
+GAUTHIER, N. Anthromes 12K DGG (V1) analysis code and R research compendium. Harvard Dataverse, 2021. DOI: <https://doi.org/10.7910/DVN/6FWPZ9>. 
+
+INSTITUTO BRASILEIRO DE GEOGRAFIA E ESTATÍSTICA (IBGE). Metodologia do censo demográfico 2010. Rio de Janeiro: IBGE, 712p., 2013a.
+
+LOVELACE, R., NOWOSAD, J., & MUENCHOW, J. Geocomputation with R. Chapman and Hall/CRC, 353p., 2019. Available in: <https://www.routledge.com/Geocomputation-with-R/Lovelace-Nowosad-Muenchow/p/book/9780367670573>. 
+
+MORENO, M. & BASILLE, M. Drawing beautiful maps programmatically with R, sf and ggplot2 - Part 1: Basics. 2021. Available in: <https://r-spatial.org/r/2018/10/25/ggplot2-sf.html>. 
+
 :::

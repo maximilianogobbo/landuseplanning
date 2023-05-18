@@ -28,6 +28,7 @@ library(GSODR)
 library(tidyverse)
 library(ggplot2,gapminder, magrittr)
 library(pander)
+library(rgdal)
 ```
 
 # Introdução
@@ -71,9 +72,10 @@ O Script 12 expressa na primeira linha como foi realizado o carregamento dos dad
 
 *Script 12:* Carregamento do arquivo Cobertura_uso_da_terra_SP
 ```{r}
-shapefile("C:/ARQUIVOS COMPUTADOR/DOUTORADO/DOUTORADO TESE/03 DADOS GEOESPACIAIS/03 USO E COBERTURA DO SOLO/Cobertura_uso_da_terra_SP.shp")
-
-coberturasp <- shapefile("Cobertura_uso_da_terra_SP")
+coberturasp <- readOGR(dsn="C:/ARQUIVOS COMPUTADOR/DOUTORADO/DOUTORADO TESE/03 DADOS GEOESPACIAIS/03 USO E COBERTURA DO SOLO", 
+                              layer="coberturasp", 
+                              verbose=FALSE, 
+                              stringsAsFactors=FALSE);
 ```
 Fonte: os autores (2023). Legenda: script descrevendo o carregamento dos dados de Cobertura_da_terra_SP por meio da função shapefile (_) e a criação do dataframe coberturasp. No script são apresentadas diferentes informações que constituem o arquivo e os dados carregados. 
 
@@ -107,10 +109,19 @@ Nesta perspectiva, como nos interessavam o ano de 2010 para estruturação da á
 
 *Figura 12:* Plotagem dos dados de coberturasp para o ano de 2010.
 ```{r}
+par(mfrow=c(1,2))
 plot (coberturasp)
 plot(coberturasp["USO2010"])
 ```
 Fonte: os autores (2023). Legenda: Figura produzida através da plotagem dos dados de coberturasp, utilizando a função plot (_) para produção e os colchetes [] para filtrar os dados referentes ao ano de 2010. 
+
+```{r}
+png("C:/ARQUIVOS COMPUTADOR/DOUTORADO/DOUTORADO TESE/03 DADOS GEOESPACIAIS/03 USO E COBERTURA DO SOLO/figura01.png", res = 300, width = 4800, height = 2400)
+par(mfrow=c(1,2))
+plot (coberturasp)
+plot(coberturasp["USO2010"])
+dev.off
+```
 
 A Figura 12, produzida pela plotagem do conjunto de dados, demonstrou que a estrutura poligonal do Estado de São Paulo estava visivelmente estruturada dentro do dataframe coberturasp. Porém, o preenchimento completo da área territorial não permitiu a diferenciação dos usos e coberturas do solo que compunham o mosaico. Diante desses resultados, realizamos a conversão de coberturasp em dois modelos diferentes para atender aos requisitos apenas referidos, sendo eles, a individualização das diferentes tipologias de uso e cobertura e a fragmentação dos polígonos que compunham o território paulista. 
 
@@ -152,9 +163,15 @@ Realizadas as manipulações acima tratadas, aplicamos a função plot (_) no co
 
 *Figura 13:* Plotagem dos dados de geomcoberturasp
 ```{r}
-plot(geomcoberturasp, crs = "WKT")
+plot(geomcoberturasp)
 ```
-Fonte: os autores (2023). Legenda: Figura produzida através da plotagem dos dados de geomcoberturasp, utilizando a função plot (_) para produção e a indicação do CRS como “WKT”. 
+Fonte: os autores (2023). Legenda: Figura produzida através da plotagem dos dados de geomcoberturasp, utilizando a função plot (_) para produção. 
+
+```{r}
+png("C:/ARQUIVOS COMPUTADOR/DOUTORADO/DOUTORADO TESE/03 DADOS GEOESPACIAIS/03 USO E COBERTURA DO SOLO/figura02.png", res = 300, width = 4800, height = 2400)
+plot (geomcoberturasp)
+dev.off
+```
 
 Por meio da plotagem dos dados de geomcoberturasp (Figura 13), confirmamos que não houve perdas estruturais nos dados de uso e cobertura durante a manipulação dos dados. Entretanto, como mostrou o resultado do código, a indicação de WKT não foi necessária para a plotagem dos dados, tendo em vista que este não era um parâmetro gráfico. 
 

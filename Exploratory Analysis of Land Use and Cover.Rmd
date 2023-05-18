@@ -28,6 +28,7 @@ library(GSODR)
 library(tidyverse)
 library(ggplot2,gapminder, magrittr)
 library(pander)
+library(rgdal)
 ```
 
 # Introduction
@@ -72,9 +73,10 @@ Script 01 expresses in the first line how the data was loaded. After loading the
 
 *Script 01:* Loading the file Cobertura_uso_da_terra_SP
 ```{r}
-shapefile("C:/ARQUIVOS COMPUTADOR/DOUTORADO/DOUTORADO TESE/03 DADOS GEOESPACIAIS/03 USO E COBERTURA DO SOLO/Cobertura_uso_da_terra_SP.shp")
-
-coberturasp <- shapefile("Cobertura_uso_da_terra_SP")
+coberturasp <- readOGR(dsn="C:/ARQUIVOS COMPUTADOR/DOUTORADO/DOUTORADO TESE/03 DADOS GEOESPACIAIS/03 USO E COBERTURA DO SOLO", 
+                              layer="coberturasp", 
+                              verbose=FALSE, 
+                              stringsAsFactors=FALSE);
 ```
 *Source:* the authors (2023). *Caption:* script describing the loading of data from Cobertura_da_terra_SP using the shapefile (_) function and the creation of the dataframe coberturasp. The script presents different information that constitutes the file and the loaded data. 
 
@@ -108,10 +110,19 @@ In this perspective, as we were interested in the year 2010 for structuring the 
 
 *Figure 01:* Plot of coberturasp data for the year 2010.
 ```{r}
+par(mfrow=c(1,2))
 plot (coberturasp)
 plot(coberturasp["USO2010"])
 ```
 *Source:* the authors (2023). *Caption:* Figure produced by plotting coberturasp data, using the function plot (_) for production and square brackets [] to filter data for the year 2010.
+
+```{r}
+png("C:/ARQUIVOS COMPUTADOR/DOUTORADO/DOUTORADO TESE/03 DADOS GEOESPACIAIS/03 USO E COBERTURA DO SOLO/figura01.png", res = 300, width = 4800, height = 2400)
+par(mfrow=c(1,2))
+plot (coberturasp)
+plot(coberturasp["USO2010"])
+dev.off
+```
 
 Figure 01, produced by plotting the dataset, demonstrated that the polygonal structure of the State of São Paulo was visibly structured within the coberturasp dataframe. However, the complete filling of the territorial area did not allow the differentiation of land uses and covers that made up the mosaic. In view of these results, we performed the conversion of coberturasp into two different models to meet the requirements just mentioned, namely, the individualization of the different typologies of use and coverage and the fragmentation of the polygons that made up the territory of São Paulo.
 
@@ -156,6 +167,12 @@ After carrying out the above manipulations, we apply the plot (_) function to th
 plot(geomcoberturasp, crs = "WKT")
 ```
 *Source:* the authors (2023). *Caption:* Figure produced by plotting the geomcoberturasp data, using the plot (_) function for production and the CRS indication as “WKT”.
+
+```{r}
+png("C:/ARQUIVOS COMPUTADOR/DOUTORADO/DOUTORADO TESE/03 DADOS GEOESPACIAIS/03 USO E COBERTURA DO SOLO/figura02.png", res = 300, width = 4800, height = 2400)
+plot (geomcoberturasp)
+dev.off
+```
 
 Through the plotting of the geomcoberturasp data (Figure 02), we confirmed that there were no structural losses in the use and coverage data during data manipulation. However, as the code result showed, the WKT indication was not necessary for data plotting, considering that this was not a graphic parameter. 
 

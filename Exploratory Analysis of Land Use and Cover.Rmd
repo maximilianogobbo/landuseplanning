@@ -1,0 +1,247 @@
+---
+title: "Análise Exploratória de Dados de Uso e Cobertura do Solo"
+author: "Maximiliano Gobbo"
+date: '2022-06-09'
+output:
+  word_document: default
+  pdf_document: default
+  html_document:
+    number_sections: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r include=FALSE}
+library(sf)      # vector data package introduced in Chapter 2
+library(terra)   # raster data package introduced in Chapter 2
+library(dplyr)   # tidyverse package for data frame manipulation
+library(spData)
+library(raster)
+library(ows4R)
+library(osmdata)
+library(geodata)
+library(tigris)
+library(tidycensus)
+library(GSODR)
+library(tidyverse)
+library(ggplot2,gapminder, magrittr)
+library(pander)
+library(rgdal)
+```
+
+# Introduction
+
+<div style="text-align: justify">   The survey of attributes associated with a set of geospatial data is essential to identify points for correlation between different typologies of geographic information, as presented by Machlis (2017). The recognition of these attributes allows social and environmental information to be connected within the programming for mapping, generating cartography for the different areas of knowledge, as Anderson (2021) discussed. In this perspective, Moreno and Basile (2021) showed that through this integration it is possible, in the universe of the R language, to produce maps with sufficient quality to compose territorial, spatial, socio-environmental, environmental, and cultural analyses, thus serving the most diverse scientific fields.
+
+Considering this, Gauthier (2021) and Ellis, Beusen and Goldewijk (2020) demonstrated, through the global mapping of anthropogenic biomes (anthromes), that the correlation between different types of geospatial information, in addition to being possible, proves to be a tool for socioecological studies. These authors carried out the mapping just indicated using computational language, R language itself, and were able to generate a relevant mapping in a hexagonal grid of 96 km² of the DGG.
+
+According to the information reported in the structural bases on the anthromes, Ellis and Ramankutty (2008) pointed out that demographic information, such as population density, and land use and cover, such as cover typologies, are fundamental for the identification, classification, and mapping of different anthropogenic classes. Both in the cartographic product reported by these two authors, and in the one published by Gauthier (2021) and Ellis, Beusen and Goldewijk (2021), it is noticeable that the territorial cutouts of land uses (structured polygons) represent significant information for the classification and for the mapping of anthromes.
+
+Assuming the cartographic products described above and the indications on attributes of databases and intuiting in the future to produce local mapping of Brazilian antromas, we carried out an exploratory analysis of data on land use and cover. These data are produced by the Brazilian Institute of Geography and Statistics (IBGE), following the technical description documented in the Technical Manual of Land Use and Coverage (IBGE, 2013b).
+
+The central objectives of this investigation were to identify the attributes that made up the data made available by the institution, to recognize the spatialization of geographic information on land use and land cover and to verify if there were key attributes for the correlation of these geospatial data with demographic data, analyzed by us in another work. To achieve these goals, we based ourselves on the logical and analytical formatting presented in the works of Lovelace et al. (2019) and Anderson (2021), where functions for exploratory data analysis in the R® software are presented.
+
+# Presentation of data and methodological guidelines  
+
+OThe data on land use and land cover used in this research were those available on the Brazilian Institute of Geography and Statistics (IBGE) platform. These data were downloaded and saved in the workbook (directory) associated with this stage of the investigation. We emphasize that they are part of the Brazilian national open data policies (IBGE, 2019) and are available for remote access at the link:
+
+<https://www.ibge.gov.br/geociencias/informacoes-ambientais/cobertura-e-uso-da-terra/15831-cobertura-e-uso-da-terra-do-brasil.html?=&t=o-que-e>.
+
+We emphasize that land use and cover data were produced by IBGE following the methodological guidelines expressed in the Technical Manual of Land Use and Cover (IBGE, 2013b). Previously, we carried out a quality analysis of the data made available by the Brazilian institute, verifying their compliance with the intended use for the regionalization of Brazilian anthromes (GOBBO, 2020).
+
+Continuing our Doctoral research, we investigated in this exploratory analysis attributes that were part of the collection of data made available by the IBGE. The central objective was to identify which attributes associated with this geographic information would allow the correlation between land use and land cover data and demographic data, as well as the plotting of this information in the local mapping of antromas, as suggested by Guathier (2021) and Ellis, Beusen and Goldewijk (2020).
+
+For this purpose, the exploratory analysis of land use and land cover data was carried out in the R software, aligning our investigation with those carried out by the authors on antromas. The analytical guidelines used in the R language were extracted from the works by Lovelace et al. (2019) and Anderson (2021), where the authors follow an investigative path to identify the constituent attributes of the data and the possibility of integrating information into mappings.
+
+As previously presented in the Thesis Methodology, our focus was given to the State of São Paulo, justifying ourselves in the representativeness of the Federation Unit for the economy, politics, and national management and by the territorial cuts and sociocultural diversity of the populations that make up the São Paulo mosaic. In this perspective, data regarding the land cover of São Paulo for the period between 2010 and 2018 were downloaded from the IBGE digital collection.
+
+Following the methodological recommendations of Gauthier (2021) for classification and mapping of anthromes, which indicates that the use and coverage and census data must have the same dating to optimize the correlation and reduce information distortions, we chose to use the raster data referring to the year 2010, the last year in which the data from the census operation are already fully available on the institute's platform (IBGE, 2013a). 
+
+# Exploratory analysis of land use and cover data
+
+To present and confirm the working directory for the exploratory analysis of land use and land cover data, we used the getwd (_) function, which informs the name of the folder in which the files to be analyzed were saved, as shown below.  
+
+```{r}
+getwd()
+```
+
+We emphasize that these Brazilian data are of the raster type and, therefore, follow a loading logic different from the vector data in the R® software. In this way, we use the shapefile (_) function to load this data into the program. Between the parentheses of the function, we specify the name of the file in the directory, whose name was Cobertura_uso_da_terra_SP. We emphasize that this name reflected a set of files made available by the IBGE with different extensions, which should appear in the working folder so that the shapefile (_) function could interpret them together. 
+
+Script 01 expresses in the first line how the data was loaded. After loading the raster dataset, we create an object (dataframe) from it, using the indicator (arrow) preceded by the given name coberturasp, as shown in the second line of code. Next, we confirm the creation of the object and its composition using only the name of the coberturasp set (highlighted in the script).
+
+*Script 01:* Loading the file Cobertura_uso_da_terra_SP
+```{r}
+coberturasp <- readOGR(dsn="C:/ARQUIVOS COMPUTADOR/DOUTORADO/DOUTORADO TESE/03 DADOS GEOESPACIAIS/03 USO E COBERTURA DO SOLO", 
+                              layer="coberturasp", 
+                              verbose=FALSE, 
+                              stringsAsFactors=FALSE);
+```
+*Source:* the authors (2023). *Caption:* script describing the loading of data from Cobertura_da_terra_SP using the shapefile (_) function and the creation of the dataframe coberturasp. The script presents different information that constitutes the file and the loaded data. 
+
+The results presented in Script 01 brought relevant information about the composition of the coberturasp set. First, we observed that the class of the object is of the dataframe type of spatial polygons, that is, the data described a set of polygons that represented the areas that made up the territorial mosaic of the State of São Paulo. Additionally, we verified that the object was composed of 248,217 lines (features) and 8 variables. These variables had the following names: INDICE_GRE, USO2000, USO2010, USO2012, USO2014, USO2016, USO2018 and ID_GRE.
+
+In minimum and maximum values (respectively, min values and max values) the minimum and maximum values were presented for each of the variables that integrated the data set. On the other hand, in extend, we are faced with the indication of the minimum and maximum extension of the X and Y values that structured the set of polygons, that is, the values of the ordered pairs for plotting the data. In addition, through the CRS indicated in Script 12, we recognized that there was a projection and geographic positioning system linked to the structure of the data set.
+
+To broaden our perception of the coberturasp set and confirm the above statements, we use the summary (_) function to identify basic characteristics of the polygonal dataframe. Later, we use the class (_) function in the analysis to ratify the class that the set integrates. Sequentially, we used the names (_) function to identify which were the names expressed in the first line of the dataframe, that is, the attributes that were part of it. To confirm the number of lines that make up the dataframe, we apply the dim (_) function. The functions and their results are reported in Script 02 below.
+
+*Script 02:* Preliminary analysis of coberturasp
+```{r}
+summary(coberturasp)
+
+class(coberturasp)
+
+names(coberturasp)
+
+dim(coberturasp)
+```
+*Source:* the authors (2023). *Caption:* script with the preliminary analysis of coberturasp, where the functions summary (_) and class (_) were used.
+
+According to the results presented above (Script 02), we ratified through the class (_) function that the object belonged to the spatial polygon dataframe class. In the structure of the object, we also verified that the object had an integrated geographic coordinate system (CRS), which was represented in the Script by the minimum and maximum values of X and Y and by the expression “proj4string”. This expression revealed the geographic projection capacity of the data thanks to the coordinates indicated in the structure of the object (XY ordered pairs).
+
+In addition, we proved that the coberturasp had the spatial characteristic integrated into its structure, revealed by the expression “sp”, which comes from the term spatial. Another important aspect was the indication of “attr”, an expression that demonstrated that the object was composed of a set of attributes, which were stored in package format.
+
+Furthermore, the results from the names (_) function reaffirmed the names of the attributes of the coberturasp set, as well as their distribution in 8 columns. As far as the dim (_) function was concerned, the results proved that the object consisted of 248,217 lines and 8 columns. We thus verified that each of the lines referred to different polygonal structures of the territory of São Paulo, that is, they portrayed the locations and typologies of use and coverage that make up the mosaic of the State of São Paulo.
+
+On the other hand, considering the results obtained by the names (_) function and the type of results for each of the attributes, indicated by the summary (_) function, we recognize that the attributes “USO2000”, “USO2010”, “USO2012”, “ USO2014”, “USO2016” and “USO2018” portrayed the different years of land use and land cover monitoring, an operation carried out by IBGE every two years (IBGE, 2017; 2018; 2020).
+
+In this perspective, as we were interested in the year 2010 for structuring the decision tree for classifying Brazilian anthromes, we filtered the data referring to the year in the plot (_) function, using the attribute name “USO2010” between square brackets [] in function. Figure 12 reports how the coberturasp data were plotted for the year 2010.
+
+*Figure 01:* Plot of coberturasp data for the year 2010.
+```{r}
+par(mfrow=c(1,2))
+plot (coberturasp)
+plot(coberturasp["USO2010"])
+```
+*Source:* the authors (2023). *Caption:* Figure produced by plotting coberturasp data, using the function plot (_) for production and square brackets [] to filter data for the year 2010.
+
+```{r}
+png("C:/ARQUIVOS COMPUTADOR/DOUTORADO/DOUTORADO TESE/03 DADOS GEOESPACIAIS/03 USO E COBERTURA DO SOLO/figura01.png", res = 300, width = 4800, height = 2400)
+par(mfrow=c(1,2))
+plot (coberturasp)
+plot(coberturasp["USO2010"])
+dev.off
+```
+
+Figure 01, produced by plotting the dataset, demonstrated that the polygonal structure of the State of São Paulo was visibly structured within the coberturasp dataframe. However, the complete filling of the territorial area did not allow the differentiation of land uses and covers that made up the mosaic. In view of these results, we performed the conversion of coberturasp into two different models to meet the requirements just mentioned, namely, the individualization of the different typologies of use and coverage and the fragmentation of the polygons that made up the territory of São Paulo.
+
+First, the dataset was converted into an object of type “sp”, that is, a set of spatial information. This operation was carried out using the as (_, “spatial) function and gave rise to the dataframe coberturasp_sp. After creating this spatial set, we verified that it was part of the class of spatial objects and that it was composed of a single attribute (features). However, its structure indicated the minimum and maximum values of X and Y (extent), which linearly integrated the graphic projection structure and the object coordinate reference system (CRS).
+
+```{r}
+coberturasp_sp = as(coberturasp, "Spatial")
+coberturasp_sp
+```
+
+In a second moment, we transform the same object, coberturasp, into an object of type “sf”, that is, a simple feature collection. For this procedure we use the st_as_sf (_) function, which converts “st” datasets into “sf” type objects. According to the inferences made by Lovelace et al. (2019), this transmutation would make the data structure an object that can be assimilated by other mapping structures and spatial location. 
+
+```{r}
+coberturasp_sf = st_as_sf(coberturasp)
+coberturasp_sf
+```
+
+The results indicated that the coberturasp_sf object was created correctly, which is composed of 248,217 lines and 8 columns (features and fields, respectively). Furthermore, the geometric typology of the set was polygonal, having XY dimensions (ordered pairs) and plotting limits (bounding box) determined by the minimum and maximum values of XY. We also identified that the coordinate reference system of this object was linked to SIRGAS 2000, a system used by IBGE in the production of different national geographic information.
+
+Starting from the dataframe coberturasp_sf, we use the st_sfc (_) function to isolate the polygonal geometric structure of the State of São Paulo. As we verified in the R code, there was an attribute in the coberturasp_sf associated with the geometry of the set. In this attribute we verified the presence of X and Y values (dimensions), which delimited the structure of the polygons in the State. Considering this, we select the geometry attribute using the dollar sign ($) command, which allows specifying the column (or attribute) of interest within the data set. Together, we created a dataframe with only the geometric information, whose given name geomcoberturasp. Script 03 illustrates the operation described above.
+
+*Script 03:* Creation of the geomcoberturasp object
+```{r}
+st_sfc(coberturasp_sf$geometry)
+geomcoberturasp = st_sfc(coberturasp_sf$geometry)
+geomcoberturasp
+```
+*Source:* the authors (2023). *Caption:* script describing the conversion of coberturasp_sf into geomcoberturasp, where only the geometric information of the first set was selected to structure the second.
+
+The indications presented during the confirmation of the creation of geomcoberturasp, confirmed that the set was composed of 248,217 lines (features) in its geometric structure of the polygonal type, formed by the XY dimensions with maximum and minimum values for both (bounding box). There was also an indication that the dataframe had associated with it the CRS used by IBGE, that is, the Geocentric Reference System for the Americas 2000 (SIRGAS 2000).
+
+```{r}
+st_crs(geomcoberturasp)
+```
+
+Although there is already an indication of the CRS, we applied the st_crs (_) function to broaden our understanding of the geographic reference system associated with the polygonal structure of the object. According to the data pointed out by the function, we found that the data were linked to SIRGAS 2000 and described in the WKT (well-know text) coding system, which is the standard for simple feature geometries, that is, for points, lines and/or polygons.
+
+After carrying out the above manipulations, we apply the plot (_) function to the geomcoberturasp set, to verify the visualization pattern of these data. Between the parentheses, we insert the information “crs = WKT” to guide the plotting of data according to the data coding system, as depicted above.
+
+*Figure 02:* Plot of geocoberturasp data
+```{r}
+plot(geomcoberturasp, crs = "WKT")
+```
+*Source:* the authors (2023). *Caption:* Figure produced by plotting the geomcoberturasp data, using the plot (_) function for production and the CRS indication as “WKT”.
+
+```{r}
+png("C:/ARQUIVOS COMPUTADOR/DOUTORADO/DOUTORADO TESE/03 DADOS GEOESPACIAIS/03 USO E COBERTURA DO SOLO/figura02.png", res = 300, width = 4800, height = 2400)
+plot (geomcoberturasp)
+dev.off
+```
+
+Through the plotting of the geomcoberturasp data (Figure 02), we confirmed that there were no structural losses in the use and coverage data during data manipulation. However, as the code result showed, the WKT indication was not necessary for data plotting, considering that this was not a graphic parameter. 
+
+Focusing on the 4 datasets structured so far (geomcoberturasp, coberturasp, coberturasp_sf e coberturasp_sp), we performed a comparison between them, using different functions to broaden our understanding of them. The first function was dim (_), which indicates the number of rows, columns and layers that structure the data sets. Complementarily, with the ncell (_) function we analyzed the number of cells (pixels) that structured the four sets.
+
+From another perspective and considering the detailing of these dataframes, we apply the ext (_) function to understand the spatial extent of the information in the four sets. And finally, the crs (_) function was used to confirm that the geographic coordinate system was maintained in all of them. Script 04 below reports the results obtained by applying the functions described above. In it there was a separation by functions to group the analysis of the four sets investigated.
+
+*Script 04:* Analysis of the composition of the four datasets
+```{r}
+dim(geomcoberturasp)
+dim(coberturasp)
+dim(coberturasp_sf)
+dim(coberturasp_sp)
+```
+
+```{r}
+ncell(geomcoberturasp)
+ncell(coberturasp)
+ncell(coberturasp_sf)
+ncell(coberturasp_sp)
+```
+
+```{r}
+ext(coberturasp)
+ext(coberturasp_sf)
+ext(coberturasp_sp)
+```
+
+```{r}
+crs(geomcoberturasp)
+crs(coberturasp)
+crs(coberturasp_sf)
+crs(coberturasp_sp)
+```
+  
+We noticed in the results obtained by the dim (_) function that the sets geomcoberturasp and coberturasp_sp were not structured in lines, columns and layers, that is, both objects were spatial forms that only delimit the territorial structure of the State of São Paulo, not allowing the individualization of the polygons that composed it. On the other hand, coberturasp and coberturasp_sf were composed of a single layer ([1]) of data, consisting of 248,217 rows and 8 and 9 columns, respectively; therefore, differing in the number of attributes associated with them.
+
+Through the ncell (_) function, we observed that the coberturasp_sp had a single cell, which portrayed its formal spatial class character, that is, a spatial form of representing the territory of the State of São Paulo, without detailing the internal cuts that composed it. In the case of geomcoberturasp, we found that there were 248,217 cells that structured the dataframe of spatial polygons, showing a relative capacity for spatialization of geographic information in the plot. However, the sets coberturasp and, mainly, coberturasp_sf were composed of a significantly higher number of cells in their spatial structure, 1,985,736 and 2,233,953 respectively, which would allow for better detailing of the information in the territory of São Paulo.
+
+Regarding the information captured by the application of the ext (_) function, we point out that the geomcoberturasp set was not analyzed by this function, since it does not apply to objects of the sfc_polygon type, considering its structural profile. About the other three sets investigated, we found that they had the same spatial extent, structured based on minimum and maximum values of X and Y (xmin, xmax, ymin and ymax), as shown by the results in Script 04.
+
+Finally, as the four sets come from the same data source, we confirmed through the crs (_) function that all objects used the same geographic reference system, which was SIRGAS 2000, and followed the same WKT standard for the spatial description of objects. data.
+
+Thus, through the exploratory analysis, we verified that the coberturasp and the coberturasp_sf provides a more robust detailing of the territory of São Paulo when compared to the other structured sets. In addition, both allow the differentiation of the polygons that make up the State's territorial mosaic, allowing the individualization of areas associated with different uses and coverage, which linearly corroborates their use in the decision tree for classifying antromas.
+
+However, despite the polygons' distinction, the typologies of uses and coverage associated with them were not assimilated during the plots carried out, which could signal an error. However, consulting the metadata made available by the IBGE, we found that the qualitative attributes (characters) of the attribute “USO 2010” referred to these types of land use and cover (IBGE, 2013b; 2017; 2018; 2020). Therefore, the territorial typologies were identified within the sets and were delimited by attributes associated with the spatialization of geographic information.
+
+Furthermore, we found that the “ID_GRE” attribute, which integrated the two sets discussed above, describes a key attribute that allows correlation with other geospatial data. According to IBGE documents, this key attribute was structured to spatially concatenate geographic information, allowing the combination with data from other spatial analyzes, such as demography (IBGE, 2013b; 2017; 2018; 2020).  
+
+
+# Conclusions
+
+In this investigation we were able to evaluate the structure of data on land use and land cover provided by the Brazilian Institute of Geography and Statistics. We confirmed that these data enabled the plotting of geographic information within the spatial structure of the State of São Paulo. We also visualized how the different patterns of spatial objects are structured, allowing the collection of information that safeguarded the individualization of the polygonal cutouts that made up the São Paulo mosaic. We also attest that two of the four sets analyzed allow integration with demographic data, through spatial attributes and the key attribute used by the Brazilian institute. Therefore, the exploratory analysis of data on land use and land cover enabled the recognition for correlation between these data and the demographics, also made available by the same institution and previously analyzed, and the means to proceed with the classification of São Paulo antromas through the decision tree in R language.
+
+# References
+
+ANDERSON, E. C. Making Maps with R Â: Reproducible Research. GitHub, 2021. Available in: <https://eriqande.github.io/rep-res-web/lectures/making-maps-with-R.html>. 
+ELLIS, E. C.; BEUSEN, A. H. W.; GOLDEWIJK, K. K. Anthropogenic Biomes: 10,000 BCE to 2015 CE. Land, v. 9, n. 5, 2020. DOI: <https://doi.org/10.3390/land9050129>. 
+ELLIS, E. C.; RAMANKUTTY, N. Putting people in the map: anthropogenic biomes of the world. Frontiers in Ecology and the Environment, v. 6, n. 8, p. 439-447, 2008. ISSN 1540-9309. DOI: <https://doi.org/10.1890/070062>. 
+GAUTHIER, N. Anthromes 12K DGG (V1) analysis code and R research compendium. Harvard Dataverse, 2021. DOI: <https://doi.org/10.7910/DVN/6FWPZ9>. 
+GOBBO, M. S. L. A. Regionalization of Brazilian Anthromes: metrological tools for quality assurance of demographic results and land use and coverage. 191p. Postgraduate Program in Metrology and Quality, National Institute of Metrology, Quality and Technology, Duque de Caxias, RJ, 2020.
+INSTITUTO BRASILEIRO DE GEOGRAFIA E ESTATÍSTICA (IBGE). Manuais Técnicos em Geociências: manual técnico de uso da terra. IBGE, 3 ed., v. 7, 171p., 2013b. Available in: <https://biblioteca.ibge.gov.br/visualizacao/livros/liv81615.pdf>. 
+INSTITUTO BRASILEIRO DE GEOGRAFIA E ESTATÍSTICA (IBGE). Metodologia do censo demográfico 2010. Rio de Janeiro: IBGE, 712p., 2013a.
+INSTITUTO BRASILEIRO DE GEOGRAFIA E ESTATÍSTICA (IBGE). Monitoramento da Cobertura e Uso da Terra do Brasil 2000 – 2010 – 2012-2014 em grade territorial estatística. IBGE, Rio de Janeiro, 35p., 2017.  
+INSTITUTO BRASILEIRO DE GEOGRAFIA E ESTATÍSTICA (IBGE). Monitoramento da Cobertura e Uso da Terra do Brasil 2014-2016. IBGE, Rio de Janeiro, 32p., 2018. 
+INSTITUTO BRASILEIRO DE GEOGRAFIA E ESTATÍSTICA (IBGE). Monitoramento da Cobertura e Uso da Terra do Brasil 2016-2018. IBGE, Rio de Janeiro, 27p., 2020. 
+INSTITUTO BRASILEIRO DE GEOGRAFIA E ESTATÍSTICA (IBGE). Manuais técnicos em Geociências: acesso e uso de dados geoespaciais. IBGE, v. 14, 143p., 2019. Available in: <https://biblioteca.ibge.gov.br/visualizacao/livros/liv101675.pdf>. 
+LOVELACE, R., NOWOSAD, J., & MUENCHOW, J. Geocomputation with R. Chapman and Hall/CRC, 353p., 2019. Available in: <https://www.routledge.com/Geocomputation-with-R/Lovelace-Nowosad-Muenchow/p/book/9780367670573>. 
+MACHLIS, S. Create maps in R in 10 (fairly) easy steps. Computerworld, 2017. Available in: <https://www.computerworld.com/article/3038270/create-maps-in-r-in-10-fairly-easy-steps.html>. 
+MORENO, M. & BASILLE, M. Drawing beautiful maps programmatically with R, sf and ggplot2 - Part 1: Basics. 2021. Available in: <https://r-spatial.org/r/2018/10/25/ggplot2-sf.html>. 
+
+</div>
